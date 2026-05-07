@@ -3,7 +3,7 @@ import { StatusBar, useColorScheme } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { ThemeProvider } from 'styled-components/native';
 import styled from 'styled-components/native';
-import { darkTheme, lightTheme } from './src/theme';
+import { darkTheme, lightTheme } from '@/theme';
 
 const previewNumbers = [1, 14, 25, 36, 43];
 
