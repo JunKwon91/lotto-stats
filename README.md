@@ -7,6 +7,7 @@
 이 앱은 "당첨 예측 앱"이 아닌 "통계 분석 도구"입니다.
 
 로또 6/45는 수학적으로 예측 불가능합니다.
+
 - 각 회차는 독립 사건
 - 1등 확률: 1 / 8,145,060
 
@@ -25,9 +26,11 @@
 ## 화면 구성
 
 메인 화면 (Bottom Tab):
+
 - Home / Statistics / Recommend / Favorites
 
 서브 화면 (Stack):
+
 - Round Detail / Round List / Stats Detail / Favorite Add / Settings
 
 ## 추천 알고리즘 5가지
