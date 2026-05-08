@@ -51,6 +51,15 @@ export const typography = {
     lineHeight: 28,
   },
 
+  // headlineSm — 작은 헤드라인 (Stack Navigator 헤더 타이틀)
+  // headlineMd보다 한 단계 작음, 네비게이션 헤더용
+  headlineSm: {
+    fontFamily: 'Manrope',
+    fontSize: 17,
+    fontWeight: '600' as const,
+    lineHeight: 22,
+  },
+
   // bodyBase — 기본 본문 텍스트
   // 예: 설명 단락, 카드 내부 본문
   bodyBase: {
@@ -66,6 +75,15 @@ export const typography = {
     fontSize: 14,
     fontWeight: '400' as const,
     lineHeight: 20,
+  },
+
+  // labelSm — 작은 라벨 (Bottom Tab 라벨, 작은 버튼 텍스트)
+  // labelCaps와 달리 대문자 변환 없음 — 한글 라벨에 적합
+  labelSm: {
+    fontFamily: 'Inter',
+    fontSize: 11,
+    fontWeight: '500' as const,
+    lineHeight: 14,
   },
 
   // labelCaps — 대문자 라벨 (테이블 헤더, 카테고리 태그)
