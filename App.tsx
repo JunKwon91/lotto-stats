@@ -2,19 +2,25 @@
 // LottoStats 앱 진입점
 // ============================================================================
 // Provider 중첩 구조:
-//   ThemeProvider           ← styled-components: 모드(light/dark) 테마 주입
-//     SafeAreaProvider      ← Notch/Dynamic Island 등 Safe Area 정보 제공
-//       NavigationContainer ← React Navigation의 루트
-//         RootNavigator     ← 실제 화면 트리
+//   ThemeProvider              ← styled-components: 모드(light/dark) 테마 주입
+//     QueryClientProvider      ← TanStack Query: 서버 상태/캐시 관리
+//       SafeAreaProvider       ← Notch/Dynamic Island 등 Safe Area 정보 제공
+//         NavigationContainer  ← React Navigation의 루트
+//           RootNavigator      ← 실제 화면 트리
 //
-// useColorScheme()으로 시스템 다크/라이트 모드를 감지하여 자동으로 테마 전환.
+// useColorScheme()으로 시스템 다크/라이트 모드를 감지하여 자동 테마 전환.
+//
+// queryClient 인스턴스는 src/lib/queryClient.ts에서 import.
+// 컴포넌트 외부(api 함수, 백그라운드 로직)에서도 직접 접근 가능.
 // ============================================================================
 
 import { StatusBar, useColorScheme } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { NavigationContainer } from '@react-navigation/native';
+import { QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from 'styled-components/native';
 import RootNavigator from '@/navigation/RootNavigator';
+import { queryClient } from '@/lib/queryClient';
 import { darkTheme, lightTheme } from '@/theme';
 
 export default function App() {
@@ -24,13 +30,15 @@ export default function App() {
 
   return (
     <ThemeProvider theme={theme}>
-      <SafeAreaProvider>
-        {/* StatusBar 아이콘 색을 모드에 맞춰 자동 조정 */}
-        <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
-        <NavigationContainer>
-          <RootNavigator />
-        </NavigationContainer>
-      </SafeAreaProvider>
+      <QueryClientProvider client={queryClient}>
+        <SafeAreaProvider>
+          {/* StatusBar 아이콘 색을 모드에 맞춰 자동 조정 */}
+          <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
+          <NavigationContainer>
+            <RootNavigator />
+          </NavigationContainer>
+        </SafeAreaProvider>
+      </QueryClientProvider>
     </ThemeProvider>
   );
 }
