@@ -11,7 +11,7 @@
 //   headlineMd   Manrope 20 / 600  — 카드 제목, 섹션 헤더
 //   headlineSm   Manrope 17 / 600  — Stack Navigator 헤더 타이틀
 //   bodyBase     Inter   16 / 400  — 기본 본문
-//   bodySm      Inter   14 / 400  — 보조 본문, 테이블 셀
+//   bodySm       Inter   14 / 400  — 보조 본문, 테이블 셀
 //   labelSm      Inter   11 / 500  — Bottom Tab 라벨
 //   labelCaps    Inter   12 / 600  — 대문자 라벨 (자동 uppercase + letterSpacing 0.6)
 //
@@ -43,27 +43,53 @@ import type {
 import styled from 'styled-components/native';
 
 export type TextVariant =
+  /** Manrope 32 / 700 · 메인 페이지 큰 제목 */
   | 'displayLg'
+  /** Manrope 20 / 600 · 카드 제목, 섹션 헤더 */
   | 'headlineMd'
+  /** Manrope 17 / 600 · Stack Navigator 헤더 타이틀 */
   | 'headlineSm'
+  /** Inter 16 / 400 · 기본 본문 */
   | 'bodyBase'
+  /** Inter 14 / 400 · 보조 본문, 데이터 테이블 셀 */
   | 'bodySm'
+  /** Inter 11 / 500 · Bottom Tab 라벨 */
   | 'labelSm'
+  /** Inter 12 / 600 · 대문자 라벨 (자동 uppercase + letterSpacing 0.6) */
   | 'labelCaps';
 
 export type TextColor =
+  /** text.primary · 본문/제목 기본 */
   | 'primary'
+  /** text.secondary · 부제, 설명 */
   | 'secondary'
+  /** text.muted · 흐릿한 메타데이터, 캡션 */
   | 'muted'
+  /** primary.action · 강조 액센트 (라이트=진한 파랑, 다크=옅은 파랑) */
   | 'accent'
+  /** text.primaryInverse · 반대 모드 색상 (어두운 배경 위 등) */
   | 'inverse';
 
 export interface TextProps extends Omit<RNTextProps, 'style'> {
+  /**
+   * theme.typography에서 선택하는 스타일 variant.
+   * @default 'bodyBase'
+   */
   variant?: TextVariant;
+  /**
+   * 텍스트 색상 — theme.colors 토큰 매핑. 다크/라이트 모드 자동 전환.
+   * @default 'primary'
+   */
   color?: TextColor;
+  /**
+   * 텍스트 정렬.
+   * @default 'left'
+   */
   align?: 'left' | 'center' | 'right';
+  /** 최대 표시 줄 수. 초과 시 말줄임표(`…`)로 잘림. */
   numberOfLines?: number;
   children: ReactNode;
+  /** RN TextStyle 인라인 스타일 override. */
   style?: StyleProp<TextStyle>;
 }
 
@@ -72,10 +98,13 @@ const StyledText = styled.Text<{
   $color: TextColor;
   $align: 'left' | 'center' | 'right';
 }>`
-  font-family: ${({ theme, $variant }) => theme.typography[$variant].fontFamily};
+  font-family: ${({ theme, $variant }) =>
+    theme.typography[$variant].fontFamily};
   font-size: ${({ theme, $variant }) => theme.typography[$variant].fontSize}px;
-  font-weight: ${({ theme, $variant }) => theme.typography[$variant].fontWeight};
-  line-height: ${({ theme, $variant }) => theme.typography[$variant].lineHeight}px;
+  font-weight: ${({ theme, $variant }) =>
+    theme.typography[$variant].fontWeight};
+  line-height: ${({ theme, $variant }) =>
+    theme.typography[$variant].lineHeight}px;
   text-align: ${({ $align }) => $align};
   color: ${({ theme, $color }) => {
     switch ($color) {
@@ -101,6 +130,17 @@ const StyledText = styled.Text<{
   }};
 `;
 
+/**
+ * 시맨틱 텍스트 컴포넌트.
+ *
+ * theme.typography의 7가지 variant + theme.colors의 5가지 color를 props로
+ * 받아 RN Text를 렌더한다. 다크/라이트 모드 색상은 ThemeProvider가 자동 전환.
+ *
+ * @example
+ * <Text variant="headlineMd">최근 회차</Text>
+ * <Text variant="bodySm" color="muted">2026-05-09 추첨</Text>
+ * <Text variant="labelCaps" color="accent">NEW</Text>
+ */
 export default function Text({
   variant = 'bodyBase',
   color = 'primary',
