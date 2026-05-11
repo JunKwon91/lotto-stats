@@ -74,6 +74,5 @@ yarn-error.log
 !.yarn/sdks
 !.yarn/versions
 
-/docs
 # 로컬 문서 (GitHub에 올리지 않음)
-Docs/
+docs/
