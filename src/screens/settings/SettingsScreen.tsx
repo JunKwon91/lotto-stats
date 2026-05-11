@@ -12,8 +12,10 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import styled from 'styled-components/native';
 
 import {
+  Divider,
   Spacer,
   Text,
+  type DividerColor,
   type SpacerSize,
   type TextColor,
   type TextVariant,
@@ -47,6 +49,8 @@ const verticalSpacerSamples: { size: SpacerSize; label: string }[] = [
 ];
 
 const horizontalSpacerSamples: SpacerSize[] = ['xs', 'sm', 'md', 'lg'];
+
+const dividerColorSamples: DividerColor[] = ['subtle', 'default', 'strong'];
 
 const Container = styled(SafeAreaView)`
   flex: 1;
@@ -98,6 +102,16 @@ const Row = styled.View`
 
 const SpacerGroup = styled.View`
   margin-bottom: ${({ theme }) => theme.spacing.md}px;
+`;
+
+const DividerColorGroup = styled.View`
+  margin-bottom: ${({ theme }) => theme.spacing.md}px;
+`;
+
+const InsetDemoBox = styled.View`
+  padding-top: ${({ theme }) => theme.spacing.md}px;
+  padding-bottom: ${({ theme }) => theme.spacing.md}px;
+  background-color: ${({ theme }) => theme.colors.state.error};
 `;
 
 export default function SettingsScreen() {
@@ -175,6 +189,46 @@ export default function SettingsScreen() {
               </Fragment>
             ))}
           </Row>
+        </Section>
+
+        <Section>
+          <SectionHeader>
+            <Text variant="headlineMd">Divider</Text>
+          </SectionHeader>
+
+          {dividerColorSamples.map(c => (
+            <DividerColorGroup key={c}>
+              <Text variant="labelSm" color="muted">
+                {c}
+              </Text>
+              <Spacer size="xs" />
+              <Divider color={c} />
+            </DividerColorGroup>
+          ))}
+
+          <Spacer size="sm" />
+          <Text variant="labelSm" color="muted">
+            orientation · vertical (inset 4)
+          </Text>
+          <Spacer size="xs" />
+          <Row>
+            <Text>왼쪽</Text>
+            <Spacer size="sm" axis="horizontal" />
+            <Divider orientation="vertical" color="default" inset={4} />
+            <Spacer size="sm" axis="horizontal" />
+            <Text>오른쪽</Text>
+          </Row>
+
+          <Spacer size="md" />
+          <Text variant="labelSm" color="muted">
+            inset 차이 (0 vs 32)
+          </Text>
+          <Spacer size="xs" />
+          <InsetDemoBox>
+            <Divider color="strong" />
+            <Spacer size="md" />
+            <Divider color="strong" inset={32} />
+          </InsetDemoBox>
         </Section>
       </Scroll>
     </Container>
