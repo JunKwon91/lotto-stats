@@ -25,6 +25,7 @@ export default function RootNavigator() {
 
   return (
     <Stack.Navigator
+      initialRouteName="Settings" // 임시: Text 갤러리 확인용 — 본 콘텐츠 작성 시 제거
       screenOptions={{
         // 서브 화면 공통 헤더 스타일
         headerStyle: {
