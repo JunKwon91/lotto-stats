@@ -6,11 +6,18 @@
 // 본 설정 콘텐츠(5/13 예정) 작성 시 이 갤러리는 제거된다.
 // ============================================================================
 
+import { Fragment } from 'react';
 import { ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import styled from 'styled-components/native';
 
-import { Text, type TextColor, type TextVariant } from '@/components/common';
+import {
+  Spacer,
+  Text,
+  type SpacerSize,
+  type TextColor,
+  type TextVariant,
+} from '@/components/common';
 
 const variantSamples: { key: TextVariant; label: string }[] = [
   { key: 'displayLg', label: 'DisplayLg — 메인 큰 제목 (Manrope 32 / 700)' },
@@ -30,6 +37,16 @@ const colorSamples: { key: Exclude<TextColor, 'inverse'>; label: string }[] = [
 ];
 
 const alignSamples = ['left', 'center', 'right'] as const;
+
+const verticalSpacerSamples: { size: SpacerSize; label: string }[] = [
+  { size: 'xs', label: 'xs (4px)' },
+  { size: 'sm', label: 'sm (8px)' },
+  { size: 'md', label: 'md (12px)' },
+  { size: 'lg', label: 'lg (16px)' },
+  { size: 'xl', label: 'xl (24px)' },
+];
+
+const horizontalSpacerSamples: SpacerSize[] = ['xs', 'sm', 'md', 'lg'];
 
 const Container = styled(SafeAreaView)`
   flex: 1;
@@ -60,6 +77,27 @@ const InverseBox = styled.View`
   padding: ${({ theme }) => theme.spacing.md}px;
   background-color: ${({ theme }) => theme.colors.bg.sectionMain};
   border-radius: ${({ theme }) => theme.radius.base}px;
+`;
+
+const Box = styled.View`
+  background-color: ${({ theme }) => theme.colors.state.error};
+  height: 8px;
+  width: 100%;
+`;
+
+const SmallBox = styled.View`
+  background-color: ${({ theme }) => theme.colors.state.error};
+  width: 40px;
+  height: 24px;
+`;
+
+const Row = styled.View`
+  flex-direction: row;
+  align-items: center;
+`;
+
+const SpacerGroup = styled.View`
+  margin-bottom: ${({ theme }) => theme.spacing.md}px;
 `;
 
 export default function SettingsScreen() {
@@ -106,6 +144,37 @@ export default function SettingsScreen() {
               </Text>
             </Sample>
           ))}
+        </Section>
+
+        <Section>
+          <SectionHeader>
+            <Text variant="headlineMd">Spacer · vertical</Text>
+          </SectionHeader>
+          {verticalSpacerSamples.map(({ size, label }) => (
+            <SpacerGroup key={size}>
+              <Box />
+              <Text variant="labelSm" color="muted">
+                {label}
+              </Text>
+              <Spacer size={size} />
+              <Box />
+            </SpacerGroup>
+          ))}
+        </Section>
+
+        <Section>
+          <SectionHeader>
+            <Text variant="headlineMd">Spacer · horizontal</Text>
+          </SectionHeader>
+          <Row>
+            <SmallBox />
+            {horizontalSpacerSamples.map(size => (
+              <Fragment key={size}>
+                <Spacer size={size} axis="horizontal" />
+                <SmallBox />
+              </Fragment>
+            ))}
+          </Row>
         </Section>
       </Scroll>
     </Container>
