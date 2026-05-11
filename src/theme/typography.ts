@@ -11,6 +11,11 @@
 //   - Manrope: 기하학적, 모던한 느낌 → 큰 제목과 로또 공 숫자에 사용
 //   - Inter:  가독성 최고 → 본문, 라벨, 작은 텍스트에 사용
 //
+// [Figma 동기화]
+// 이 파일의 8개 variant는 Figma Foundations Typography 섹션의 sample과
+// 1:1로 일치한다 (headlineSm, labelSm 포함). variant를 새로 추가하거나
+// 사양을 변경할 때는 Figma도 함께 갱신해야한다.
+//
 // [중요: 폰트 파일 링크 필요]
 // 아래 fontFamily에 'Manrope', 'Inter'를 적었지만, 폰트 .ttf 파일을
 // iOS와 Android에 별도로 링크하지 않으면 렌더되지 않는다.
@@ -37,9 +42,9 @@ export const typography = {
   // 예: "LottoStats" 앱 진입 화면 큰 글씨
   displayLg: {
     fontFamily: 'Manrope',
-    fontSize: 32,                  // px 단위 (RN은 단위 없는 숫자)
-    fontWeight: '700' as const,    // bold (700 = bold)
-    lineHeight: 38,                // 줄 간격 (보통 fontSize * 1.2 정도)
+    fontSize: 32, // px 단위 (RN은 단위 없는 숫자)
+    fontWeight: '700' as const, // bold (700 = bold)
+    lineHeight: 38, // 줄 간격 (보통 fontSize * 1.2 정도)
   },
 
   // headlineMd — 중간 크기 헤드라인 (카드 제목, 섹션 헤더)
@@ -47,7 +52,7 @@ export const typography = {
   headlineMd: {
     fontFamily: 'Manrope',
     fontSize: 20,
-    fontWeight: '600' as const,    // semi-bold (600)
+    fontWeight: '600' as const, // semi-bold (600)
     lineHeight: 28,
   },
 
@@ -65,7 +70,7 @@ export const typography = {
   bodyBase: {
     fontFamily: 'Inter',
     fontSize: 16,
-    fontWeight: '400' as const,    // regular (400)
+    fontWeight: '400' as const, // regular (400)
     lineHeight: 24,
   },
 
@@ -93,7 +98,7 @@ export const typography = {
     fontSize: 12,
     fontWeight: '600' as const,
     lineHeight: 16,
-    letterSpacing: 0.6,            // 자간 — 대문자 텍스트는 살짝 벌리면 가독성↑
+    letterSpacing: 0.6, // 자간 — 대문자 텍스트는 살짝 벌리면 가독성↑
     textTransform: 'uppercase' as const, // 자동으로 대문자로 변환
     // textTransform도 좁은 union 타입이라 'as const' 필요
   },
@@ -105,7 +110,7 @@ export const typography = {
     fontFamily: 'Manrope',
     fontSize: 15,
     fontWeight: '700' as const,
-    lineHeight: 15,                // fontSize와 동일 → 정확한 중앙 정렬
+    lineHeight: 15, // fontSize와 동일 → 정확한 중앙 정렬
   },
 } as const;
 
