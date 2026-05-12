@@ -72,9 +72,8 @@ export default function MainTabNavigator() {
         tabBarInactiveTintColor: theme.colors.text.muted,
         // 탭바 컨테이너 스타일
         tabBarStyle: {
-          backgroundColor: theme.colors.surface.containerHigh,
-          borderTopColor: theme.colors.border.subtle,
-          borderTopWidth: 1,
+          backgroundColor: theme.colors.surface.container,
+          borderTopWidth: 0,
         },
         // 라벨 스타일
         tabBarLabelStyle: {
