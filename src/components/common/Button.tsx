@@ -162,7 +162,8 @@ export default function Button({
   return (
     <Pressable
       style={computeStyle}
-      onPress={blocked ? undefined : onPress}
+      disabled={blocked}
+      onPress={onPress}
       accessibilityRole="button"
       accessibilityState={{ disabled: blocked, busy: loading }}
       accessibilityLabel={accessibilityLabel ?? label}
