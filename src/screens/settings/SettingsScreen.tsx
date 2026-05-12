@@ -8,13 +8,14 @@
 
 import { Fragment } from 'react';
 import { View } from 'react-native';
-import { Plus } from 'lucide-react-native';
+import { ChevronLeft, Plus, Settings, Star, X } from 'lucide-react-native';
 import styled, { useTheme } from 'styled-components/native';
 
 import {
   Button,
   Card,
   Divider,
+  IconButton,
   Screen,
   Section,
   Spacer,
@@ -308,6 +309,135 @@ export default function SettingsScreen() {
             }
             onPress={noop}
           />
+        </Card>
+      </Section>
+      <Spacer size="2xl" />
+
+      <Section title="IconButton · sizes × colors">
+        <Card>
+          <Text variant="labelSm" color="muted">
+            sm (24×24)
+          </Text>
+          <Spacer size="sm" />
+          <Row>
+            <IconButton
+              icon={<Settings />}
+              size="sm"
+              color="primary"
+              accessibilityLabel="설정 primary"
+              onPress={noop}
+            />
+            <Spacer size="md" axis="horizontal" />
+            <IconButton
+              icon={<Settings />}
+              size="sm"
+              color="secondary"
+              accessibilityLabel="설정 secondary"
+              onPress={noop}
+            />
+            <Spacer size="md" axis="horizontal" />
+            <IconButton
+              icon={<Settings />}
+              size="sm"
+              color="muted"
+              accessibilityLabel="설정 muted"
+              onPress={noop}
+            />
+            <Spacer size="md" axis="horizontal" />
+            <IconButton
+              icon={<Settings />}
+              size="sm"
+              color="accent"
+              accessibilityLabel="설정 accent"
+              onPress={noop}
+            />
+          </Row>
+          <Text variant="labelSm" color="muted">
+            md (32×32) — default
+          </Text>
+          <Spacer size="sm" />
+          <Row>
+            <IconButton
+              icon={<ChevronLeft />}
+              color="primary"
+              accessibilityLabel="뒤로 primary"
+              onPress={noop}
+            />
+            <Spacer size="md" axis="horizontal" />
+            <IconButton
+              icon={<ChevronLeft />}
+              color="secondary"
+              accessibilityLabel="뒤로 secondary"
+              onPress={noop}
+            />
+            <Spacer size="md" axis="horizontal" />
+            <IconButton
+              icon={<ChevronLeft />}
+              color="muted"
+              accessibilityLabel="뒤로 muted"
+              onPress={noop}
+            />
+            <Spacer size="md" axis="horizontal" />
+            <IconButton
+              icon={<ChevronLeft />}
+              color="accent"
+              accessibilityLabel="뒤로 accent"
+              onPress={noop}
+            />
+          </Row>
+          <Text variant="labelSm" color="muted">
+            lg (44×44) — Apple HIG 권장
+          </Text>
+          <Spacer size="sm" />
+          <Row>
+            <IconButton
+              icon={<Star />}
+              size="lg"
+              color="primary"
+              accessibilityLabel="즐겨찾기 primary"
+              onPress={noop}
+            />
+            <Spacer size="md" axis="horizontal" />
+            <IconButton
+              icon={<Star />}
+              size="lg"
+              color="secondary"
+              accessibilityLabel="즐겨찾기 secondary"
+              onPress={noop}
+            />
+            <Spacer size="md" axis="horizontal" />
+            <IconButton
+              icon={<Star />}
+              size="lg"
+              color="muted"
+              accessibilityLabel="즐겨찾기 muted"
+              onPress={noop}
+            />
+            <Spacer size="md" axis="horizontal" />
+            <IconButton
+              icon={<Star />}
+              size="lg"
+              color="accent"
+              accessibilityLabel="즐겨찾기 accent"
+              onPress={noop}
+            />
+          </Row>
+        </Card>
+      </Section>
+      <Spacer size="2xl" />
+
+      <Section title="IconButton · disabled">
+        <Card>
+          <Row>
+            <IconButton icon={<X />} accessibilityLabel="닫기" onPress={noop} />
+            <Spacer size="md" axis="horizontal" />
+            <IconButton
+              icon={<X />}
+              disabled
+              accessibilityLabel="닫기 disabled"
+              onPress={noop}
+            />
+          </Row>
         </Card>
       </Section>
     </Screen>
