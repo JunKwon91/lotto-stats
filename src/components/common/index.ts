@@ -6,3 +6,10 @@ export type { SpacerProps, SpacerSize, SpacerAxis } from './Spacer';
 
 export { default as Divider } from './Divider';
 export type { DividerProps, DividerOrientation, DividerColor } from './Divider';
+
+export { default as Screen } from './Screen';
+export type {
+  ScreenProps,
+  ScreenEdge,
+  ScreenBackground,
+} from './Screen';

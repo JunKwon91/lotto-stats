@@ -7,12 +7,11 @@
 // ============================================================================
 
 import { Fragment } from 'react';
-import { ScrollView } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import styled from 'styled-components/native';
+import styled, { useTheme } from 'styled-components/native';
 
 import {
   Divider,
+  Screen,
   Spacer,
   Text,
   type DividerColor,
@@ -51,18 +50,6 @@ const verticalSpacerSamples: { size: SpacerSize; label: string }[] = [
 const horizontalSpacerSamples: SpacerSize[] = ['xs', 'sm', 'md', 'lg'];
 
 const dividerColorSamples: DividerColor[] = ['subtle', 'default', 'strong'];
-
-const Container = styled(SafeAreaView)`
-  flex: 1;
-  background-color: ${({ theme }) => theme.colors.bg.canvas};
-`;
-
-const Scroll = styled(ScrollView).attrs(({ theme }) => ({
-  contentContainerStyle: {
-    paddingHorizontal: theme.spacing.containerMargin,
-    paddingVertical: theme.spacing.lg,
-  },
-}))``;
 
 const Section = styled.View`
   margin-bottom: ${({ theme }) => theme.spacing['2xl']}px;
@@ -115,10 +102,13 @@ const InsetDemoBox = styled.View`
 `;
 
 export default function SettingsScreen() {
+  const theme = useTheme();
   return (
-    <Container>
-      <Scroll>
-        <Section>
+    <Screen
+      scroll
+      contentContainerStyle={{ paddingVertical: theme.spacing.lg }}
+    >
+      <Section>
           <SectionHeader>
             <Text variant="headlineMd">Text · variants</Text>
           </SectionHeader>
@@ -230,7 +220,6 @@ export default function SettingsScreen() {
             <Divider color="strong" inset={32} />
           </InsetDemoBox>
         </Section>
-      </Scroll>
-    </Container>
+    </Screen>
   );
 }
