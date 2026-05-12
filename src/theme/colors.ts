@@ -38,11 +38,14 @@
 //   각 색상 문자열도 '#F8FAFC' 같은 정확한 리터럴 타입으로 좁혀라"라고 지시.
 //   (실수로 슬레이트 50을 다른 색으로 덮어쓰는 것을 컴파일러가 막아줌)
 const primitives = {
+  // 절대 색상 — 모드 무관, 디자인 시스템 어느 곳에서도 동일.
+  white: '#FFFFFF',
+  black: '#000000',
   // slate 계열 — Tailwind CSS의 slate 컬러 스케일을 그대로 채택.
   // 숫자가 작을수록 밝고(50=거의 흰색), 클수록 어둡다(950=거의 검정).
   // 라이트 모드의 배경/표면/텍스트 색상이 모두 여기서 나온다.
   slate: {
-    50: '#F8FAFC',  // 가장 밝은 회색 (라이트 모드 배경)
+    50: '#F8FAFC', // 가장 밝은 회색 (라이트 모드 배경)
     100: '#F1F5F9',
     200: '#E2E8F0',
     300: '#CBD5E1',
@@ -72,28 +75,28 @@ const primitives = {
   // 브랜드 색상 — 앱의 정체성을 나타내는 액센트 색상
   brand: {
     primaryLight: '#3B82F6', // 라이트 모드용 진한 파랑 (Tailwind blue-500)
-    primaryDark: '#ADC6FF',  // 다크 모드용 옅은 파랑 (어두운 배경 위에서도 충분한 대비)
-    secondary: '#4CD7F6',    // 보조 (시안)
-    tertiary: '#FFB786',     // 3차 (살구색, 거의 안 씀)
+    primaryDark: '#ADC6FF', // 다크 모드용 옅은 파랑 (어두운 배경 위에서도 충분한 대비)
+    secondary: '#4CD7F6', // 보조 (시안)
+    tertiary: '#FFB786', // 3차 (살구색, 거의 안 씀)
   },
   // 상태 색상 — 의미가 정해진 색 (모드 무관)
   state: {
-    hot: '#EF4444',        // "Hot" 번호 — 자주 출현 (빨강)
-    cold: '#06B6D4',       // "Cold" 번호 — 오래 안 나옴 (시안)
-    success: '#22C55E',    // 성공/긍정 (초록)
-    warning: '#F59E0B',    // 경고 (주황)
+    hot: '#EF4444', // "Hot" 번호 — 자주 출현 (빨강)
+    cold: '#06B6D4', // "Cold" 번호 — 오래 안 나옴 (시안)
+    success: '#22C55E', // 성공/긍정 (초록)
+    warning: '#F59E0B', // 경고 (주황)
     errorLight: '#DC2626', // 에러 — 라이트 모드용 (진한 빨강)
-    errorDark: '#FFB4AB',  // 에러 — 다크 모드용 (밝은 살구빨강)
+    errorDark: '#FFB4AB', // 에러 — 다크 모드용 (밝은 살구빨강)
   },
   // 로또 공 색상 — 한국 로또 6/45의 공식 색상 매핑 (모드 무관)
   ball: {
     yellow: '#FBC400', // 1~10번 (노란 공)
-    blue: '#69C8F2',   // 11~20번 (파란 공)
-    red: '#FF7272',    // 21~30번 (빨간 공)
-    gray: '#AAAAAA',   // 31~40번 (회색 공)
-    green: '#B0D840',  // 41~45번 (초록 공)
+    blue: '#69C8F2', // 11~20번 (파란 공)
+    red: '#FF7272', // 21~30번 (빨간 공)
+    gray: '#AAAAAA', // 31~40번 (회색 공)
+    green: '#B0D840', // 41~45번 (초록 공)
     onLight: '#0F172A', // 노랑/회색/초록 위에 올릴 텍스트 색 (어두운 색)
-    onDark: '#FFFFFF',  // 파랑/빨강 위에 올릴 텍스트 색 (흰색)
+    onDark: '#FFFFFF', // 파랑/빨강 위에 올릴 텍스트 색 (흰색)
   },
 } as const;
 
@@ -117,24 +120,26 @@ const primitives = {
 export interface ColorsShape {
   // bg = background. 가장 바깥 캔버스 배경 + Section 영역 배경.
   bg: {
-    canvas: string;       // 화면 전체 배경
-    sectionMain: string;  // 메인 화면 그룹 배경 (Bottom Tab 영역)
-    sectionSub: string;   // 서브 화면 그룹 배경 (Stack 영역)
+    canvas: string; // 화면 전체 배경
+    sectionMain: string; // 메인 화면 그룹 배경 (Bottom Tab 영역)
+    sectionSub: string; // 서브 화면 그룹 배경 (Stack 영역)
   };
   // surface = 카드, 패널 등 "들어올린(elevated)" 면.
   // 캔버스(bg) 위에 올라가는 컨텐츠 컨테이너.
   surface: {
-    dim: string;          // 가장 어두운 표면 (배경과 거의 동일)
-    container: string;    // 표준 카드 배경
+    base: string; // 베이스 표면 (Dialog/Toast 등 최상위)
+    dim: string; // 가장 어두운 표면 (배경과 거의 동일)
+    containerLowest: string; // 가장 밝은 컨테이너 (Input 등)
     containerLow: string; // 살짝 더 어두운 컨테이너 (헤더 등)
-    containerHigh: string;// 강조된 컨테이너 (선택된 항목 등)
+    container: string; // 표준 카드 배경
+    containerHigh: string; // 강조된 컨테이너 (선택된 항목 등)
   };
   // text = 글자 색상. 4단계 중요도 + 반전(inverse) 변형.
   text: {
-    primary: string;          // 본문 (가장 진한 색)
-    secondary: string;        // 부제목, 설명
-    muted: string;            // 흐릿한 부가 정보
-    primaryInverse: string;   // 반전된 primary (반대 모드용)
+    primary: string; // 본문 (가장 진한 색)
+    secondary: string; // 부제목, 설명
+    muted: string; // 흐릿한 부가 정보
+    primaryInverse: string; // 반전된 primary (반대 모드용)
     secondaryInverse: string; // 반전된 secondary
     // 'inverse'는 "현재 모드와 반대되는 텍스트 색상"을 의미.
     // 예: 라이트 모드에서 일부러 어두운 배경 위에 글자를 올릴 때
@@ -143,15 +148,15 @@ export interface ColorsShape {
   // border = 1px 선 색상.
   border: {
     default: string; // 기본 보더
-    subtle: string;  // 매우 흐릿한 구분선
-    strong: string;  // 강조된 보더
+    subtle: string; // 매우 흐릿한 구분선
+    strong: string; // 강조된 보더
   };
   // primary = 브랜드 액션 (버튼, 액티브 탭 등).
   primary: {
-    action: string;       // 메인 버튼 배경
-    onAction: string;     // 메인 버튼 위 글자색
-    container: string;    // 더 큰 강조 영역 배경
-    onContainer: string;  // 그 위 글자색
+    action: string; // 메인 버튼 배경
+    onAction: string; // 메인 버튼 위 글자색
+    container: string; // 더 큰 강조 영역 배경
+    onContainer: string; // 그 위 글자색
   };
   // state = 의미를 가진 상태 색상.
   state: {
@@ -169,7 +174,7 @@ export interface ColorsShape {
     gray: string;
     green: string;
     onLight: string; // 밝은 공 위 텍스트
-    onDark: string;  // 어두운 공 위 텍스트
+    onDark: string; // 어두운 공 위 텍스트
   };
 }
 
@@ -182,21 +187,23 @@ export interface ColorsShape {
 // ----------------------------------------------------------------------------
 export const lightColors: ColorsShape = {
   bg: {
-    canvas: primitives.slate[50],         // 거의 흰색 캔버스
+    canvas: primitives.slate[50], // 거의 흰색 캔버스
     sectionMain: primitives.slateDark[900], // (라이트 모드인데도) 어두운 Section bg
-    sectionSub: primitives.slate[950],    //  └ mode swap 의도 — 같은 페이지에서
-                                          //    라이트/다크 모드를 비교 시각화하기 위함
+    sectionSub: primitives.slate[950], //  └ mode swap 의도 — 같은 페이지에서
+    //    라이트/다크 모드를 비교 시각화하기 위함
   },
   surface: {
+    base: primitives.white,
     dim: primitives.slate[100],
-    container: primitives.slate[50],      // 카드 = 거의 흰색
+    containerLowest: primitives.white,
     containerLow: primitives.slate[50],
+    container: primitives.white,
     containerHigh: primitives.slate[100],
   },
   text: {
-    primary: primitives.slate[900],       // 진한 슬레이트 (가장 어두움)
+    primary: primitives.slate[900], // 진한 슬레이트 (가장 어두움)
     secondary: primitives.slate[700],
-    muted: primitives.slate[500],         // 흐릿한 회색
+    muted: primitives.slate[500], // 흐릿한 회색
     primaryInverse: primitives.slateDark[200], // 다크 모드 텍스트 색상을 빌려옴
     secondaryInverse: primitives.slateDark[300],
   },
@@ -207,9 +214,9 @@ export const lightColors: ColorsShape = {
   },
   primary: {
     action: primitives.brand.primaryLight, // 진한 파랑 버튼
-    onAction: '#FFFFFF',                   // 그 위 흰색 글자
-    container: '#DBEAFE',                  // 옅은 파랑 컨테이너
-    onContainer: '#1E3A8A',                // 그 위 진한 파랑 글자
+    onAction: '#FFFFFF', // 그 위 흰색 글자
+    container: '#DBEAFE', // 옅은 파랑 컨테이너
+    onContainer: '#1E3A8A', // 그 위 진한 파랑 글자
   },
   state: {
     hot: primitives.state.hot,
@@ -231,21 +238,23 @@ export const lightColors: ColorsShape = {
 // ----------------------------------------------------------------------------
 export const darkColors: ColorsShape = {
   bg: {
-    canvas: primitives.slateDark[900],   // 거의 검정 캔버스
-    sectionMain: primitives.slate[50],   // (다크 모드인데도) 밝은 Section bg
-    sectionSub: primitives.slate[100],   //  └ 위 lightColors의 의도와 동일 (mode swap)
+    canvas: primitives.slateDark[900], // 거의 검정 캔버스
+    sectionMain: primitives.slate[50], // (다크 모드인데도) 밝은 Section bg
+    sectionSub: primitives.slate[100], //  └ 위 lightColors의 의도와 동일 (mode swap)
   },
   surface: {
+    base: primitives.slateDark[900],
     dim: primitives.slateDark[900],
-    container: primitives.slateDark[800],
+    containerLowest: primitives.slateDark[950],
     containerLow: primitives.slateDark[850],
+    container: primitives.slateDark[800],
     containerHigh: primitives.slateDark[780],
   },
   text: {
-    primary: primitives.slateDark[200],          // 밝은 회색 (어두운 배경 위에서 가독)
+    primary: primitives.slateDark[200], // 밝은 회색 (어두운 배경 위에서 가독)
     secondary: primitives.slateDark[300],
     muted: primitives.slateDark[500],
-    primaryInverse: primitives.slate[900],       // 라이트 모드 텍스트 색상을 빌려옴
+    primaryInverse: primitives.slate[900], // 라이트 모드 텍스트 색상을 빌려옴
     secondaryInverse: primitives.slate[700],
   },
   border: {
@@ -254,8 +263,8 @@ export const darkColors: ColorsShape = {
     strong: primitives.slateDark[500],
   },
   primary: {
-    action: primitives.brand.primaryDark,  // 다크 모드용 옅은 파랑
-    onAction: primitives.slate[900],       // 그 위 진한 글자 (대비 확보)
+    action: primitives.brand.primaryDark, // 다크 모드용 옅은 파랑
+    onAction: primitives.slate[900], // 그 위 진한 글자 (대비 확보)
     container: '#4D8EFF',
     onContainer: '#00285D',
   },
