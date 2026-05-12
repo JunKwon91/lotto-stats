@@ -19,3 +19,6 @@ export type { CardProps, CardVariant, CardDensity } from './Card';
 
 export { default as Section } from './Section';
 export type { SectionProps, SectionSpacing } from './Section';
+
+export { default as Button } from './Button';
+export type { ButtonProps, ButtonVariant, ButtonSize } from './Button';

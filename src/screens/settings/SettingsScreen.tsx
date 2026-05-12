@@ -8,9 +8,11 @@
 
 import { Fragment } from 'react';
 import { View } from 'react-native';
+import { Plus } from 'lucide-react-native';
 import styled, { useTheme } from 'styled-components/native';
 
 import {
+  Button,
   Card,
   Divider,
   Screen,
@@ -22,6 +24,8 @@ import {
   type TextColor,
   type TextVariant,
 } from '@/components/common';
+
+const noop = () => {};
 
 const variantSamples: { key: TextVariant; label: string }[] = [
   { key: 'displayLg', label: 'DisplayLg — 메인 큰 제목 (Manrope 32 / 700)' },
@@ -255,6 +259,55 @@ export default function SettingsScreen() {
       >
         <Card>
           <Text>action prop 검증용 컨텐츠</Text>
+        </Card>
+      </Section>
+      <Spacer size="2xl" />
+
+      <Section title="Button · variants × sizes">
+        <Card>
+          <Button label="Primary sm" variant="primary" size="sm" onPress={noop} />
+          <Spacer size="sm" />
+          <Button label="Primary md" variant="primary" size="md" onPress={noop} />
+          <Spacer size="sm" />
+          <Button label="Primary lg" variant="primary" size="lg" onPress={noop} />
+        </Card>
+        <Card>
+          <Button label="Secondary sm" variant="secondary" size="sm" onPress={noop} />
+          <Spacer size="sm" />
+          <Button label="Secondary md" variant="secondary" size="md" onPress={noop} />
+          <Spacer size="sm" />
+          <Button label="Secondary lg" variant="secondary" size="lg" onPress={noop} />
+        </Card>
+      </Section>
+      <Spacer size="2xl" />
+
+      <Section title="Button · states & options">
+        <Card>
+          <Button label="disabled" disabled onPress={noop} />
+          <Spacer size="sm" />
+          <Button label="loading" loading onPress={noop} />
+          <Spacer size="sm" />
+          <Button label="fullWidth" fullWidth onPress={noop} />
+        </Card>
+        <Card>
+          <Button
+            label="추가하기"
+            size="sm"
+            leftIcon={
+              <Plus size={14} color={theme.colors.primary.onAction} />
+            }
+            onPress={noop}
+          />
+          <Spacer size="sm" />
+          <Button
+            label="추가하기"
+            variant="secondary"
+            size="sm"
+            leftIcon={
+              <Plus size={14} color={theme.colors.text.secondary} />
+            }
+            onPress={noop}
+          />
         </Card>
       </Section>
     </Screen>
