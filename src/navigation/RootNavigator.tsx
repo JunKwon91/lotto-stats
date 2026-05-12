@@ -42,7 +42,8 @@ export default function RootNavigator() {
         headerBackButtonDisplayMode: 'minimal',
         // 그림자/구분선 (iOS는 자동, Android는 elevation 0으로 깔끔하게)
         headerShadowVisible: false,
-      }}>
+      }}
+    >
       {/* MainTabs는 Bottom Tab Navigator 자체 — 헤더 없이 풀스크린으로 */}
       <Stack.Screen
         name="MainTabs"
