@@ -34,7 +34,7 @@ const variantSamples: { key: TextVariant; label: string }[] = [
   { key: 'headlineSm', label: 'HeadlineSm — Stack 헤더 (Manrope 17 / 600)' },
   { key: 'bodyBase', label: 'BodyBase — 기본 본문 (Inter 16 / 400)' },
   { key: 'bodySm', label: 'BodySm — 보조 본문 (Inter 14 / 400)' },
-  { key: 'labelSm', label: 'LabelSm — 탭 라벨 (Inter 11 / 500)' },
+  { key: 'labelSm', label: 'LabelSm — 탭 라벨 (Inter 11 / 600)' },
   { key: 'labelCaps', label: 'labelcaps · uppercase + letterspacing' },
 ];
 
@@ -86,6 +86,17 @@ const InsetDemoBox = styled.View`
   padding-top: ${({ theme }) => theme.spacing.md}px;
   padding-bottom: ${({ theme }) => theme.spacing.md}px;
   background-color: ${({ theme }) => theme.colors.state.error};
+`;
+
+const SurfaceSampleBox = styled.View<{ $bg: string }>`
+  height: 56px;
+  border-radius: ${({ theme }) => theme.radius.md}px;
+  border-width: 1px;
+  border-color: ${({ theme }) => theme.colors.border.subtle};
+  background-color: ${({ $bg }) => $bg};
+  justify-content: center;
+  padding-left: ${({ theme }) => theme.spacing.md}px;
+  padding-right: ${({ theme }) => theme.spacing.md}px;
 `;
 
 export default function SettingsScreen() {
@@ -211,6 +222,32 @@ export default function SettingsScreen() {
         <Card title="번호 분석" meta="이번 달" showDivider>
           <Text>showDivider가 true면 헤더 아래 구분선이 나타난다.</Text>
         </Card>
+      </Section>
+      <Spacer size="2xl" />
+
+      <Section title="신규 Surface 토큰" spacing="compact">
+        <SurfaceSampleBox $bg={theme.colors.surface.containerLowest}>
+          <Text variant="bodySm">surface.containerLowest</Text>
+        </SurfaceSampleBox>
+        <SurfaceSampleBox $bg={theme.colors.surface.base}>
+          <Text variant="bodySm">surface.base</Text>
+        </SurfaceSampleBox>
+        <SurfaceSampleBox $bg={theme.colors.surface.container}>
+          <Text variant="bodySm">surface.container (기존)</Text>
+        </SurfaceSampleBox>
+      </Section>
+      <Spacer size="2xl" />
+
+      <Section title="신규 Typography 토큰" spacing="compact">
+        <Text variant="labelMd">
+          labelMd — Input·Settings Row 라벨 (Inter 13/600)
+        </Text>
+        <Text variant="labelLg">
+          labelLg — Segmented·BottomTab active (Inter 14/600)
+        </Text>
+        <Text variant="numericMd">
+          numericMd — Data Table·통계 수치 (Manrope 14/700)
+        </Text>
       </Section>
       <Spacer size="2xl" />
 
