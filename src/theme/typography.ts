@@ -82,7 +82,7 @@ export const typography = {
   labelSm: {
     fontFamily: 'Inter',
     fontSize: 11,
-    fontWeight: '500' as const,
+    fontWeight: '600' as const,
     lineHeight: 14,
   },
 

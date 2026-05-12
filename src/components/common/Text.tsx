@@ -14,7 +14,7 @@
 //   headlineSm   Manrope 17 / 600  — Stack Navigator 헤더 타이틀
 //   bodyBase     Inter   16 / 400  — 기본 본문
 //   bodySm       Inter   14 / 400  — 보조 본문, 테이블 셀
-//   labelSm      Inter   11 / 500  — Bottom Tab 라벨
+//   labelSm      Inter   11 / 600  — Bottom Tab 라벨
 //   labelMd      Inter   13 / 600  — Input·Settings Row 라벨
 //   labelLg      Inter   14 / 600  — Segmented Control·Bottom Nav active
 //   labelCaps    Inter   12 / 600  — 대문자 라벨 (자동 uppercase + letterSpacing 0.6)
@@ -47,7 +47,7 @@ export type TextVariant =
   | 'bodyBase'
   /** Inter 14 / 400 · 보조 본문, 데이터 테이블 셀 */
   | 'bodySm'
-  /** Inter 11 / 500 · Bottom Tab 라벨 */
+  /** Inter 11 / 600 · Bottom Tab 라벨 */
   | 'labelSm'
   /** Inter 13 / 600 · Input·Settings Row 라벨 */
   | 'labelMd'
