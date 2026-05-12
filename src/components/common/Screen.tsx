@@ -6,14 +6,15 @@
 // 배경색 설정, ScrollView 옵션을 일관되게 제공.
 //
 // 사용 예:
-//   // BottomTab 화면 (하단은 react-navigation이 처리)
+//   // 헤더 없는 BottomTab 화면 (Home/Stats/Recommend/Favorites)
 //   <Screen>
 //     <Text variant="displayLg">홈</Text>
 //   </Screen>
 //
-//   // Stack 화면 (상하 SafeArea + 스크롤)
-//   <Screen edges={['top', 'bottom']} scroll>
-//     <RoundDetail />
+//   // 헤더 있는 Stack 화면 (RoundDetail/RoundList/.../Settings)
+//   // top은 헤더가 이미 처리하므로 빼야 한다.
+//   <Screen edges={[]} scroll>
+//     <DetailContent />
 //   </Screen>
 //
 //   // 풀블리드 화면 (좌우 padding 없음, 이미지 등)
@@ -26,19 +27,20 @@
 // 좌우 padding: theme.spacing.containerMargin (16)
 // 상하 padding: SafeAreaInsets
 //
-// [edges 가이드]
-//   - BottomTab 화면: ['top'] (하단은 react-navigation의 BottomTab이 처리)
-//   - Stack 화면:    ['top', 'bottom']
-//   - 모달:          ['top', 'bottom']
+// [edges 가이드 — 화면 유형별]
+//   헤더 없는 BottomTab 화면 (Tab Navigator + headerShown:false):
+//     → 기본값 ['top'] 그대로. <Screen>...
 //
-// [Figma 추론 근거]
-// Screens 페이지의 모든 화면이 일관된 표준 사용:
-//   - 전체 폭 390px, 좌우 padding 16
-//   - TopAppBar 56 + Main + BottomNav 64
-//   - 배경 bg.canvas
+//   헤더 있는 Stack 화면 (Stack Navigator + options.title):
+//     → Stack 헤더가 이미 top SafeArea를 처리.
+//     → 추가 처리 불필요하면 edges={[]}
+//     → 하단 home indicator도 피하려면 edges={['bottom']}
 //
-// dedicated Figma 컴포넌트는 없지만 위 패턴이 명확하므로 코드로 추론 구현.
-// TopAppBar는 화면별 자유 구현 (Screen 책임 외).
+//   모달/풀스크린 시트 (헤더 없는 modal presentation):
+//     → edges={['top', 'bottom']}
+//
+//   ⚠️ Stack 헤더가 있는 화면에서 기본값 그대로 두면 헤더 아래에 status bar
+//      높이만큼 불필요한 공백이 생긴다(SafeArea 이중 적용).
 // ============================================================================
 
 import type { ReactNode } from 'react';
@@ -68,6 +70,13 @@ export type ScreenBackground =
 export interface ScreenProps {
   /**
    * SafeArea를 적용할 가장자리 목록.
+   *
+   * 화면 유형별 권장값:
+   * - 헤더 없는 BottomTab 화면: `['top']` (기본값)
+   * - 헤더 있는 Stack 화면: `[]` 또는 `['bottom']`
+   *   (헤더가 top을 처리. 기본값 그대로 두면 status bar만큼 공백 발생)
+   * - 모달/풀스크린 시트: `['top', 'bottom']`
+   *
    * @default ['top']
    */
   edges?: ScreenEdge[];
@@ -98,13 +107,19 @@ export interface ScreenProps {
  * 화면 최상위 컨테이너. SafeArea, 표준 padding, 배경색, scroll 옵션을 일관 제공.
  *
  * @example
- * // BottomTab 화면 (하단은 react-navigation이 처리)
+ * // 헤더 없는 BottomTab 화면 — 기본값 ['top'] 사용
  * <Screen><HomeContent /></Screen>
  *
  * @example
- * // Stack 화면 + 스크롤
- * <Screen edges={['top', 'bottom']} scroll>
+ * // 헤더 있는 Stack 화면 — top은 헤더가 처리하므로 빼야 함
+ * <Screen edges={[]} scroll>
  *   <DetailContent />
+ * </Screen>
+ *
+ * @example
+ * // 모달/풀스크린 시트 — 상하 모두 SafeArea
+ * <Screen edges={['top', 'bottom']} scroll>
+ *   <ModalContent />
  * </Screen>
  *
  * @example

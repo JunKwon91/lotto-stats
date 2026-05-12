@@ -11,16 +11,9 @@
 //   <Divider inset={16} />                   // 좌우 16px 여백 적용
 //
 // [디자인 토큰]
-// 색상은 theme.colors.border.{subtle|default|strong}에서 가져옴.
-// 두께는 1px 고정 (Figma 시안 기준).
-//
-// [Figma 추론 근거]
-// Card 내부 divider 패턴 (노드 29:10, 63:243):
-//   - 1px RECTANGLE
-//   - color/border/subtle 사용
-//   - margin/padding 없음 (부모가 결정)
-//
-// Figma에 dedicated 컴포넌트는 없지만 위 패턴이 명확하므로 코드로 추론 구현.
+// 색상: theme.colors.border.{subtle|default|strong}
+// 두께: 1px 고정
+// margin/padding 없음 (부모가 결정)
 // ============================================================================
 
 import styled from 'styled-components/native';
