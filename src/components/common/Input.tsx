@@ -155,9 +155,10 @@ export default function Input({
     fontFamily: theme.typography.bodyBase.fontFamily,
     fontSize: theme.typography.bodyBase.fontSize,
     fontWeight: theme.typography.bodyBase.fontWeight,
-    lineHeight: theme.typography.bodyBase.lineHeight,
+    lineHeight: 18,
     color: disabled ? theme.colors.text.muted : theme.colors.text.primary,
     padding: 0,
+    includeFontPadding: false,
   };
 
   return (
