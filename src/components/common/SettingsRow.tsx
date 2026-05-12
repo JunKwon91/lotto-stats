@@ -107,7 +107,6 @@ export type SettingsRowProps = SettingsRowCommon &
 
 function Toggle({ value }: { value: boolean }) {
   const theme = useTheme();
-  // TODO: Toggle Off — Figma 미정의, 5/15 이후 디자이너 협의
   const trackColor = value
     ? theme.colors.primary.action
     : theme.colors.border.default;
