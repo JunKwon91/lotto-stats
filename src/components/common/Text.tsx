@@ -2,7 +2,7 @@
 // Text — 시맨틱 텍스트 컴포넌트
 // ============================================================================
 //
-// theme.typography 7개 variant + theme.colors 5개 color를 props로 선택.
+// theme.typography 10개 variant + theme.colors 5개 color를 props로 선택.
 // 다크/라이트 모드 색상은 ThemeProvider가 자동 교체.
 //
 // styled-components/native 위에서 transient props($variant/$color/$align)를
@@ -15,7 +15,10 @@
 //   bodyBase     Inter   16 / 400  — 기본 본문
 //   bodySm       Inter   14 / 400  — 보조 본문, 테이블 셀
 //   labelSm      Inter   11 / 500  — Bottom Tab 라벨
+//   labelMd      Inter   13 / 600  — Input·Settings Row 라벨
+//   labelLg      Inter   14 / 600  — Segmented Control·Bottom Nav active
 //   labelCaps    Inter   12 / 600  — 대문자 라벨 (자동 uppercase + letterSpacing 0.6)
+//   numericMd    Manrope 14 / 700  — 일반 숫자 표시 (Data Table 셀)
 //
 // [color]
 //   primary      text.primary           — 본문/제목 기본
@@ -46,8 +49,14 @@ export type TextVariant =
   | 'bodySm'
   /** Inter 11 / 500 · Bottom Tab 라벨 */
   | 'labelSm'
+  /** Inter 13 / 600 · Input·Settings Row 라벨 */
+  | 'labelMd'
+  /** Inter 14 / 600 · Segmented Control·Bottom Nav active */
+  | 'labelLg'
   /** Inter 12 / 600 · 대문자 라벨 (자동 uppercase + letterSpacing 0.6) */
-  | 'labelCaps';
+  | 'labelCaps'
+  /** Manrope 14 / 700 · 일반 숫자 표시 (Data Table 셀) */
+  | 'numericMd';
 
 export type TextColor =
   /** text.primary · 본문/제목 기본 */
@@ -124,7 +133,7 @@ const StyledText = styled.Text<{
 /**
  * 시맨틱 텍스트 컴포넌트.
  *
- * theme.typography의 7가지 variant + theme.colors의 5가지 color를 props로
+ * theme.typography의 10가지 variant + theme.colors의 5가지 color를 props로
  * 받아 RN Text를 렌더한다. 다크/라이트 모드 색상은 ThemeProvider가 자동 전환.
  *
  * @example
