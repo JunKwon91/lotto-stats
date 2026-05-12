@@ -6,7 +6,7 @@
 // 모든 간격은 4의 배수만 사용한다(4, 8, 12, 16, 20, 24, ...).
 // 왜?
 //   1) 시각적 일관성 — 16px 옆에 17px이 섞이면 미묘하게 어긋나 보임
-//   2) 디자이너-개발자 합의 — Figma도 4px 그리드로 작업하면 코드와 1:1
+//   2) 디자이너-개발자 합의 — 디자인 도구도 4px 그리드 기준이면 코드와 1:1 동기화 가능
 //   3) 디자인 시스템의 표준 (Material Design, iOS HIG, Tailwind 모두 4px 또는 8px 기반)
 //
 // [개념: 토큰 이름 규칙]
@@ -54,14 +54,12 @@ export const spacing = {
 // 사용 예) borderRadius: theme.radius.lg → 16px (카드)
 //          borderRadius: theme.radius.full → 9999 (완전한 원/캡슐)
 // ----------------------------------------------------------------------------
-// radius 토큰은 Figma Variables 컬렉션 `Radius`와 1:1로 일치한다.
-// 특히 `base`는 Figma `radius/base`와 이름·값(8) 모두 동일
 export const radius = {
   none: 0, // 직각 모서리
   sm: 4, // 매우 작은 둥글기 (체크박스 등)
   base: 8, // 기본 둥글기 (인풋, 작은 버튼)
   md: 12, // 중간 (중간 카드)
-  lg: 16, // 큰 둥글기 (메인 카드 — DESIGN.md 표준)
+  lg: 16, // 큰 둥글기 (메인 카드)
   xl: 24, // 매우 큰 (Bottom Nav, Segmented Control 등 캡슐형 컨테이너)
   full: 9999, // 완전한 원/타원 (로또 공, 동그란 아바타)
 } as const;

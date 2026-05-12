@@ -11,11 +11,6 @@
 //   - Manrope: 기하학적, 모던한 느낌 → 큰 제목과 로또 공 숫자에 사용
 //   - Inter:  가독성 최고 → 본문, 라벨, 작은 텍스트에 사용
 //
-// [Figma 동기화]
-// 이 파일의 8개 variant는 Figma Foundations Typography 섹션의 sample과
-// 1:1로 일치한다 (headlineSm, labelSm 포함). variant를 새로 추가하거나
-// 사양을 변경할 때는 Figma도 함께 갱신해야한다.
-//
 // [중요: 폰트 파일 링크 필요]
 // 아래 fontFamily에 'Manrope', 'Inter'를 적었지만, 폰트 .ttf 파일을
 // iOS와 Android에 별도로 링크하지 않으면 렌더되지 않는다.

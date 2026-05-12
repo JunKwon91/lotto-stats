@@ -23,8 +23,7 @@
 //   - 다크/라이트 모드에서 같은 의미("text.primary")가 다른 원시값을 가리켜야 함
 //   - 컴포넌트는 Semantic만 사용 → 모드 전환 시 컴포넌트 코드 수정 불필요
 //
-// 이 구조는 Figma Variables(file 0YQttqpYf0Bk6dIiVVcnLa)와 1:1로 일치한다.
-// Figma에서 디자이너가 토큰 이름·구조를 결정한 뒤, 그 결정을 코드로 그대로 옮긴 것.
+// 이 구조는 디자인 시스템의 토큰 정의와 1:1로 일치하도록 구성한다.
 // ============================================================================
 
 // ----------------------------------------------------------------------------
@@ -185,8 +184,8 @@ export const lightColors: ColorsShape = {
   bg: {
     canvas: primitives.slate[50],         // 거의 흰색 캔버스
     sectionMain: primitives.slateDark[900], // (라이트 모드인데도) 어두운 Section bg
-    sectionSub: primitives.slate[950],    //  └ Figma의 모드 swap 의도 — 디자인 시스템 페이지에서
-                                          //    같은 페이지 안에 양 모드를 시각화하기 위함
+    sectionSub: primitives.slate[950],    //  └ mode swap 의도 — 같은 페이지에서
+                                          //    라이트/다크 모드를 비교 시각화하기 위함
   },
   surface: {
     dim: primitives.slate[100],
