@@ -13,3 +13,6 @@ export type {
   ScreenEdge,
   ScreenBackground,
 } from './Screen';
+
+export { default as Card } from './Card';
+export type { CardProps, CardVariant, CardDensity } from './Card';
