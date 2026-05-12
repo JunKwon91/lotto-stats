@@ -6,7 +6,7 @@
 // 본 설정 콘텐츠 작성 시 이 갤러리는 제거된다.
 // ============================================================================
 
-import { Fragment } from 'react';
+import { Fragment, useState } from 'react';
 import { View } from 'react-native';
 import { ChevronLeft, Plus, Settings, Star, X } from 'lucide-react-native';
 import styled, { useTheme } from 'styled-components/native';
@@ -18,6 +18,7 @@ import {
   IconButton,
   Input,
   Screen,
+  SearchInput,
   Section,
   Spacer,
   Text,
@@ -102,6 +103,8 @@ const SurfaceSampleBox = styled.View<{ $bg: string }>`
 
 export default function SettingsScreen() {
   const theme = useTheme();
+  const [searchEmpty, setSearchEmpty] = useState('');
+  const [searchFilled, setSearchFilled] = useState('1043회');
   return (
     <Screen
       scroll
@@ -514,6 +517,26 @@ export default function SettingsScreen() {
           placeholder="회차를 입력하세요"
           helper="조회할 로또 회차를 입력하세요."
           showHelper={false}
+        />
+      </Section>
+      <Spacer size="2xl" />
+
+      <Section title="SearchInput · 상태">
+        <Text variant="labelSm" color="muted">
+          Empty (타이핑하면 X 버튼 등장)
+        </Text>
+        <SearchInput
+          value={searchEmpty}
+          placeholder="번호·회차 검색"
+          onChangeText={setSearchEmpty}
+        />
+        <Text variant="labelSm" color="muted">
+          Filled (X 탭으로 클리어)
+        </Text>
+        <SearchInput
+          value={searchFilled}
+          placeholder="번호·회차 검색"
+          onChangeText={setSearchFilled}
         />
       </Section>
     </Screen>
