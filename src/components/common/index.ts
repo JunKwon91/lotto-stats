@@ -16,3 +16,6 @@ export type {
 
 export { default as Card } from './Card';
 export type { CardProps, CardVariant, CardDensity } from './Card';
+
+export { default as Section } from './Section';
+export type { SectionProps, SectionSpacing } from './Section';
