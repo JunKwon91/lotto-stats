@@ -80,7 +80,7 @@ export interface ButtonProps {
   disabled?: boolean;
   /** true면 ActivityIndicator를 표시하고 탭을 차단한다. label은 숨김. */
   loading?: boolean;
-  /** label 좌측 아이콘 (sm 14px, md/lg 16~20px 권장). */
+  /** label 좌측 아이콘. 권장 크기 — sm 14px / md 16px / lg 18px. */
   leftIcon?: ReactNode;
   /** 부모 폭을 가득 채운다. */
   fullWidth?: boolean;
