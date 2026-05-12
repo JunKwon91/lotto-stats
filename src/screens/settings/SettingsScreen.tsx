@@ -10,6 +10,7 @@ import { Fragment } from 'react';
 import styled, { useTheme } from 'styled-components/native';
 
 import {
+  Card,
   Divider,
   Screen,
   Spacer,
@@ -106,120 +107,163 @@ export default function SettingsScreen() {
   return (
     <Screen
       scroll
+      edges={[]}
       contentContainerStyle={{ paddingVertical: theme.spacing.lg }}
     >
       <Section>
-          <SectionHeader>
-            <Text variant="headlineMd">Text · variants</Text>
-          </SectionHeader>
-          {variantSamples.map(({ key, label }) => (
-            <Sample key={key}>
-              <Text variant={key}>{label}</Text>
-            </Sample>
-          ))}
-        </Section>
+        <SectionHeader>
+          <Text variant="headlineMd">Text · variants</Text>
+        </SectionHeader>
+        {variantSamples.map(({ key, label }) => (
+          <Sample key={key}>
+            <Text variant={key}>{label}</Text>
+          </Sample>
+        ))}
+      </Section>
 
-        <Section>
-          <SectionHeader>
-            <Text variant="headlineMd">Text · colors</Text>
-          </SectionHeader>
-          {colorSamples.map(({ key, label }) => (
-            <Sample key={key}>
-              <Text variant="bodyBase" color={key}>
-                {label}
-              </Text>
-            </Sample>
-          ))}
-          <InverseBox>
-            <Text variant="bodyBase" color="inverse">
-              inverse — 반전 텍스트 (어두운 배경 위)
+      <Section>
+        <SectionHeader>
+          <Text variant="headlineMd">Text · colors</Text>
+        </SectionHeader>
+        {colorSamples.map(({ key, label }) => (
+          <Sample key={key}>
+            <Text variant="bodyBase" color={key}>
+              {label}
             </Text>
-          </InverseBox>
-        </Section>
-
-        <Section>
-          <SectionHeader>
-            <Text variant="headlineMd">Text · aligns</Text>
-          </SectionHeader>
-          {alignSamples.map(a => (
-            <Sample key={a}>
-              <Text variant="bodyBase" align={a}>
-                {a} — 정렬 샘플 텍스트
-              </Text>
-            </Sample>
-          ))}
-        </Section>
-
-        <Section>
-          <SectionHeader>
-            <Text variant="headlineMd">Spacer · vertical</Text>
-          </SectionHeader>
-          {verticalSpacerSamples.map(({ size, label }) => (
-            <SpacerGroup key={size}>
-              <Box />
-              <Text variant="labelSm" color="muted">
-                {label}
-              </Text>
-              <Spacer size={size} />
-              <Box />
-            </SpacerGroup>
-          ))}
-        </Section>
-
-        <Section>
-          <SectionHeader>
-            <Text variant="headlineMd">Spacer · horizontal</Text>
-          </SectionHeader>
-          <Row>
-            <SmallBox />
-            {horizontalSpacerSamples.map(size => (
-              <Fragment key={size}>
-                <Spacer size={size} axis="horizontal" />
-                <SmallBox />
-              </Fragment>
-            ))}
-          </Row>
-        </Section>
-
-        <Section>
-          <SectionHeader>
-            <Text variant="headlineMd">Divider</Text>
-          </SectionHeader>
-
-          {dividerColorSamples.map(c => (
-            <DividerColorGroup key={c}>
-              <Text variant="labelSm" color="muted">
-                {c}
-              </Text>
-              <Spacer size="xs" />
-              <Divider color={c} />
-            </DividerColorGroup>
-          ))}
-
-          <Spacer size="sm" />
-          <Text variant="labelSm" color="muted">
-            orientation · vertical (inset 4)
+          </Sample>
+        ))}
+        <InverseBox>
+          <Text variant="bodyBase" color="inverse">
+            inverse — 반전 텍스트 (어두운 배경 위)
           </Text>
-          <Spacer size="xs" />
-          <Row>
-            <Text>왼쪽</Text>
-            <Spacer size="sm" axis="horizontal" />
-            <Divider orientation="vertical" color="default" inset={4} />
-            <Spacer size="sm" axis="horizontal" />
-            <Text>오른쪽</Text>
-          </Row>
+        </InverseBox>
+      </Section>
 
+      <Section>
+        <SectionHeader>
+          <Text variant="headlineMd">Text · aligns</Text>
+        </SectionHeader>
+        {alignSamples.map(a => (
+          <Sample key={a}>
+            <Text variant="bodyBase" align={a}>
+              {a} — 정렬 샘플 텍스트
+            </Text>
+          </Sample>
+        ))}
+      </Section>
+
+      <Section>
+        <SectionHeader>
+          <Text variant="headlineMd">Spacer · vertical</Text>
+        </SectionHeader>
+        {verticalSpacerSamples.map(({ size, label }) => (
+          <SpacerGroup key={size}>
+            <Box />
+            <Text variant="labelSm" color="muted">
+              {label}
+            </Text>
+            <Spacer size={size} />
+            <Box />
+          </SpacerGroup>
+        ))}
+      </Section>
+
+      <Section>
+        <SectionHeader>
+          <Text variant="headlineMd">Spacer · horizontal</Text>
+        </SectionHeader>
+        <Row>
+          <SmallBox />
+          {horizontalSpacerSamples.map(size => (
+            <Fragment key={size}>
+              <Spacer size={size} axis="horizontal" />
+              <SmallBox />
+            </Fragment>
+          ))}
+        </Row>
+      </Section>
+
+      <Section>
+        <SectionHeader>
+          <Text variant="headlineMd">Divider</Text>
+        </SectionHeader>
+
+        {dividerColorSamples.map(c => (
+          <DividerColorGroup key={c}>
+            <Text variant="labelSm" color="muted">
+              {c}
+            </Text>
+            <Spacer size="xs" />
+            <Divider color={c} />
+          </DividerColorGroup>
+        ))}
+
+        <Spacer size="sm" />
+        <Text variant="labelSm" color="muted">
+          orientation · vertical (inset 4)
+        </Text>
+        <Spacer size="xs" />
+        <Row>
+          <Text>왼쪽</Text>
+          <Spacer size="sm" axis="horizontal" />
+          <Divider orientation="vertical" color="default" inset={4} />
+          <Spacer size="sm" axis="horizontal" />
+          <Text>오른쪽</Text>
+        </Row>
+
+        <Spacer size="md" />
+        <Text variant="labelSm" color="muted">
+          inset 차이 (0 vs 32)
+        </Text>
+        <Spacer size="xs" />
+        <InsetDemoBox>
+          <Divider color="strong" />
           <Spacer size="md" />
-          <Text variant="labelSm" color="muted">
-            inset 차이 (0 vs 32)
-          </Text>
-          <Spacer size="xs" />
-          <InsetDemoBox>
-            <Divider color="strong" />
-            <Spacer size="md" />
-            <Divider color="strong" inset={32} />
-          </InsetDemoBox>
-        </Section>
+          <Divider color="strong" inset={32} />
+        </InsetDemoBox>
+      </Section>
+
+      <Section>
+        <SectionHeader>
+          <Text variant="headlineMd">Card</Text>
+        </SectionHeader>
+
+        <Text variant="labelSm" color="muted">
+          variant (default · elevated)
+        </Text>
+        <Spacer size="xs" />
+        <Card>
+          <Text>default variant (보더 있음)</Text>
+        </Card>
+        <Spacer size="md" />
+        <Card variant="elevated">
+          <Text>elevated variant (보더 없음)</Text>
+        </Card>
+
+        <Spacer size="lg" />
+
+        <Text variant="labelSm" color="muted">
+          density (default · compact)
+        </Text>
+        <Spacer size="xs" />
+        <Card title="default density" meta="padding 16">
+          <Text>일반 카드</Text>
+        </Card>
+        <Spacer size="md" />
+        <Card density="compact" title="compact density" meta="padding 12">
+          <Text>컴팩트 카드</Text>
+        </Card>
+
+        <Spacer size="lg" />
+
+        <Text variant="labelSm" color="muted">
+          title + meta + showDivider
+        </Text>
+        <Spacer size="xs" />
+        <Card title="번호 분석" meta="이번 달" showDivider>
+          <Text>showDivider가 true면 헤더 아래 구분선이 나타난다.</Text>
+        </Card>
+      </Section>
     </Screen>
   );
 }
