@@ -16,6 +16,7 @@ import {
   Card,
   Divider,
   IconButton,
+  Input,
   Screen,
   Section,
   Spacer,
@@ -476,6 +477,44 @@ export default function SettingsScreen() {
             />
           </Row>
         </Card>
+      </Section>
+      <Spacer size="2xl" />
+
+      <Section title="Input · 상태">
+        <Text variant="labelSm" color="muted">
+          Default (탭하면 Focus 상태로 전환)
+        </Text>
+        <Input
+          label="회차 번호"
+          placeholder="회차를 입력하세요"
+          helper="조회할 로또 회차를 입력하세요."
+        />
+        <Text variant="labelSm" color="muted">
+          Error
+        </Text>
+        <Input
+          label="회차 번호"
+          placeholder="회차를 입력하세요"
+          error="유효하지 않은 회차입니다"
+        />
+        <Text variant="labelSm" color="muted">
+          Disabled
+        </Text>
+        <Input
+          label="회차 번호"
+          placeholder="회차를 입력하세요"
+          helper="조회할 로또 회차를 입력하세요."
+          disabled
+        />
+        <Text variant="labelSm" color="muted">
+          showHelper = false
+        </Text>
+        <Input
+          label="회차 번호"
+          placeholder="회차를 입력하세요"
+          helper="조회할 로또 회차를 입력하세요."
+          showHelper={false}
+        />
       </Section>
     </Screen>
   );
