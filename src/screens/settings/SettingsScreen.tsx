@@ -3,16 +3,18 @@
 // ============================================================================
 //
 // 공통 컴포넌트를 화면 위에서 시각적으로 확인하기 위한 임시 화면.
-// 본 설정 콘텐츠(5/13 예정) 작성 시 이 갤러리는 제거된다.
+// 본 설정 콘텐츠 작성 시 이 갤러리는 제거된다.
 // ============================================================================
 
 import { Fragment } from 'react';
+import { View } from 'react-native';
 import styled, { useTheme } from 'styled-components/native';
 
 import {
   Card,
   Divider,
   Screen,
+  Section,
   Spacer,
   Text,
   type DividerColor,
@@ -52,20 +54,7 @@ const horizontalSpacerSamples: SpacerSize[] = ['xs', 'sm', 'md', 'lg'];
 
 const dividerColorSamples: DividerColor[] = ['subtle', 'default', 'strong'];
 
-const Section = styled.View`
-  margin-bottom: ${({ theme }) => theme.spacing['2xl']}px;
-`;
-
-const SectionHeader = styled.View`
-  margin-bottom: ${({ theme }) => theme.spacing.md}px;
-`;
-
-const Sample = styled.View`
-  margin-bottom: ${({ theme }) => theme.spacing.sm}px;
-`;
-
 const InverseBox = styled.View`
-  margin-top: ${({ theme }) => theme.spacing.sm}px;
   padding: ${({ theme }) => theme.spacing.md}px;
   background-color: ${({ theme }) => theme.colors.bg.sectionMain};
   border-radius: ${({ theme }) => theme.radius.base}px;
@@ -88,14 +77,6 @@ const Row = styled.View`
   align-items: center;
 `;
 
-const SpacerGroup = styled.View`
-  margin-bottom: ${({ theme }) => theme.spacing.md}px;
-`;
-
-const DividerColorGroup = styled.View`
-  margin-bottom: ${({ theme }) => theme.spacing.md}px;
-`;
-
 const InsetDemoBox = styled.View`
   padding-top: ${({ theme }) => theme.spacing.md}px;
   padding-bottom: ${({ theme }) => theme.spacing.md}px;
@@ -110,27 +91,20 @@ export default function SettingsScreen() {
       edges={[]}
       contentContainerStyle={{ paddingVertical: theme.spacing.lg }}
     >
-      <Section>
-        <SectionHeader>
-          <Text variant="headlineMd">Text · variants</Text>
-        </SectionHeader>
+      <Section title="Text · variants">
         {variantSamples.map(({ key, label }) => (
-          <Sample key={key}>
-            <Text variant={key}>{label}</Text>
-          </Sample>
+          <Text key={key} variant={key}>
+            {label}
+          </Text>
         ))}
       </Section>
+      <Spacer size="2xl" />
 
-      <Section>
-        <SectionHeader>
-          <Text variant="headlineMd">Text · colors</Text>
-        </SectionHeader>
+      <Section title="Text · colors">
         {colorSamples.map(({ key, label }) => (
-          <Sample key={key}>
-            <Text variant="bodyBase" color={key}>
-              {label}
-            </Text>
-          </Sample>
+          <Text key={key} variant="bodyBase" color={key}>
+            {label}
+          </Text>
         ))}
         <InverseBox>
           <Text variant="bodyBase" color="inverse">
@@ -138,40 +112,32 @@ export default function SettingsScreen() {
           </Text>
         </InverseBox>
       </Section>
+      <Spacer size="2xl" />
 
-      <Section>
-        <SectionHeader>
-          <Text variant="headlineMd">Text · aligns</Text>
-        </SectionHeader>
+      <Section title="Text · aligns">
         {alignSamples.map(a => (
-          <Sample key={a}>
-            <Text variant="bodyBase" align={a}>
-              {a} — 정렬 샘플 텍스트
-            </Text>
-          </Sample>
+          <Text key={a} variant="bodyBase" align={a}>
+            {a} — 정렬 샘플 텍스트
+          </Text>
         ))}
       </Section>
+      <Spacer size="2xl" />
 
-      <Section>
-        <SectionHeader>
-          <Text variant="headlineMd">Spacer · vertical</Text>
-        </SectionHeader>
+      <Section title="Spacer · vertical">
         {verticalSpacerSamples.map(({ size, label }) => (
-          <SpacerGroup key={size}>
+          <View key={size}>
             <Box />
             <Text variant="labelSm" color="muted">
               {label}
             </Text>
             <Spacer size={size} />
             <Box />
-          </SpacerGroup>
+          </View>
         ))}
       </Section>
+      <Spacer size="2xl" />
 
-      <Section>
-        <SectionHeader>
-          <Text variant="headlineMd">Spacer · horizontal</Text>
-        </SectionHeader>
+      <Section title="Spacer · horizontal">
         <Row>
           <SmallBox />
           {horizontalSpacerSamples.map(size => (
@@ -182,27 +148,21 @@ export default function SettingsScreen() {
           ))}
         </Row>
       </Section>
+      <Spacer size="2xl" />
 
-      <Section>
-        <SectionHeader>
-          <Text variant="headlineMd">Divider</Text>
-        </SectionHeader>
-
+      <Section title="Divider">
         {dividerColorSamples.map(c => (
-          <DividerColorGroup key={c}>
+          <View key={c}>
             <Text variant="labelSm" color="muted">
               {c}
             </Text>
             <Spacer size="xs" />
             <Divider color={c} />
-          </DividerColorGroup>
+          </View>
         ))}
-
-        <Spacer size="sm" />
         <Text variant="labelSm" color="muted">
           orientation · vertical (inset 4)
         </Text>
-        <Spacer size="xs" />
         <Row>
           <Text>왼쪽</Text>
           <Spacer size="sm" axis="horizontal" />
@@ -210,58 +170,91 @@ export default function SettingsScreen() {
           <Spacer size="sm" axis="horizontal" />
           <Text>오른쪽</Text>
         </Row>
-
-        <Spacer size="md" />
         <Text variant="labelSm" color="muted">
           inset 차이 (0 vs 32)
         </Text>
-        <Spacer size="xs" />
         <InsetDemoBox>
           <Divider color="strong" />
           <Spacer size="md" />
           <Divider color="strong" inset={32} />
         </InsetDemoBox>
       </Section>
+      <Spacer size="2xl" />
 
-      <Section>
-        <SectionHeader>
-          <Text variant="headlineMd">Card</Text>
-        </SectionHeader>
-
+      <Section title="Card">
         <Text variant="labelSm" color="muted">
           variant (default · elevated)
         </Text>
-        <Spacer size="xs" />
         <Card>
           <Text>default variant (보더 있음)</Text>
         </Card>
-        <Spacer size="md" />
         <Card variant="elevated">
           <Text>elevated variant (보더 없음)</Text>
         </Card>
-
-        <Spacer size="lg" />
-
         <Text variant="labelSm" color="muted">
           density (default · compact)
         </Text>
-        <Spacer size="xs" />
         <Card title="default density" meta="padding 16">
           <Text>일반 카드</Text>
         </Card>
-        <Spacer size="md" />
         <Card density="compact" title="compact density" meta="padding 12">
           <Text>컴팩트 카드</Text>
         </Card>
-
-        <Spacer size="lg" />
-
         <Text variant="labelSm" color="muted">
           title + meta + showDivider
         </Text>
-        <Spacer size="xs" />
         <Card title="번호 분석" meta="이번 달" showDivider>
           <Text>showDivider가 true면 헤더 아래 구분선이 나타난다.</Text>
+        </Card>
+      </Section>
+      <Spacer size="2xl" />
+
+      <Section title="Section · default spacing">
+        <Card>
+          <Text>card 1</Text>
+        </Card>
+        <Card>
+          <Text>card 2</Text>
+        </Card>
+        <Card>
+          <Text>card 3</Text>
+        </Card>
+      </Section>
+      <Spacer size="2xl" />
+
+      <Section title="Section · compact spacing" spacing="compact">
+        <Card density="compact">
+          <Text>card 1</Text>
+        </Card>
+        <Card density="compact">
+          <Text>card 2</Text>
+        </Card>
+        <Card density="compact">
+          <Text>card 3</Text>
+        </Card>
+      </Section>
+      <Spacer size="2xl" />
+
+      <Section title="Section · roomy spacing" spacing="roomy">
+        <Card>
+          <Text>card 1</Text>
+        </Card>
+        <Card>
+          <Text>card 2</Text>
+        </Card>
+      </Section>
+      <Spacer size="2xl" />
+
+      <Section
+        title="action 있는 Section"
+        action={
+          <Text variant="bodySm" color="accent">
+            전체 보기
+          </Text>
+        }
+      >
+        <Card>
+          <Text>action prop 검증용 컨텐츠</Text>
         </Card>
       </Section>
     </Screen>
