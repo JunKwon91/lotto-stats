@@ -86,6 +86,31 @@ export const typography = {
     lineHeight: 14,
   },
 
+  // labelMd — 중간 라벨 (Input 라벨, Settings Row 라벨)
+  labelMd: {
+    fontFamily: 'Inter',
+    fontSize: 13,
+    fontWeight: '600' as const,
+    lineHeight: 16,
+  },
+
+  // labelLg — 큰 라벨 (Segmented Control, Bottom Navigation active)
+  labelLg: {
+    fontFamily: 'Inter',
+    fontSize: 14,
+    fontWeight: '600' as const,
+    lineHeight: 20,
+  },
+
+  // numericMd — 일반 숫자 표시 (Data Table 셀, 통계 수치)
+  // 로또 공 전용 ballNumber와 달리 lineHeight가 fontSize보다 커서 본문에 어울림
+  numericMd: {
+    fontFamily: 'Manrope',
+    fontSize: 14,
+    fontWeight: '700' as const,
+    lineHeight: 20,
+  },
+
   // labelCaps — 대문자 라벨 (테이블 헤더, 카테고리 태그)
   // 예: "NUMBER", "FREQ", "TREND" 같은 컬럼 헤더
   labelCaps: {
