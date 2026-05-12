@@ -35,3 +35,6 @@ export type { InputProps, InputState } from './Input';
 
 export { default as SearchInput } from './SearchInput';
 export type { SearchInputProps } from './SearchInput';
+
+export { default as SettingsRow } from './SettingsRow';
+export type { SettingsRowProps } from './SettingsRow';
