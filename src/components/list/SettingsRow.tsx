@@ -36,7 +36,7 @@ import type { StyleProp, ViewStyle } from 'react-native';
 import { ChevronRight, ExternalLink } from 'lucide-react-native';
 import { useTheme } from 'styled-components/native';
 
-import Text from './Text';
+import Text from '@/components/primitives/Text';
 
 const styles = StyleSheet.create({
   row: {

@@ -46,7 +46,7 @@ import { View } from 'react-native';
 import type { StyleProp, ViewStyle } from 'react-native';
 import styled from 'styled-components/native';
 
-import Text from './Text';
+import Text from '@/components/primitives/Text';
 
 export type SectionSpacing =
   /** spacing.sm (8) · 자식이 가까이 붙어야 하는 리스트형 그룹 */

@@ -34,7 +34,7 @@ import { Pressable, StyleSheet, View } from 'react-native';
 import type { StyleProp, ViewStyle } from 'react-native';
 import { useTheme } from 'styled-components/native';
 
-import Text from './Text';
+import Text from '@/components/primitives/Text';
 
 export interface SegmentedControlSegment<T extends string> {
   /** 내부 값 — onChange 콜백에 전달되는 식별자. */

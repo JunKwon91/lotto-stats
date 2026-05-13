@@ -46,8 +46,8 @@ import type {
 } from 'react-native';
 import { useTheme } from 'styled-components/native';
 
-import Text from './Text';
-import type { TextVariant } from './Text';
+import Text from '@/components/primitives/Text';
+import type { TextVariant } from '@/components/primitives/Text';
 
 export type ButtonVariant =
   /** 진한 배경 + 밝은 텍스트 (메인 액션) */
