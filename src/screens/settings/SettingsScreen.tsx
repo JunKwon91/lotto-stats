@@ -8,30 +8,37 @@
 
 import { Fragment, useMemo, useState } from 'react';
 import { View } from 'react-native';
-import { ChevronLeft, Plus, Settings, Star, X } from 'lucide-react-native';
+import {
+  ChevronLeft,
+  Inbox,
+  Plus,
+  Search,
+  Settings,
+  Star,
+  X,
+} from 'lucide-react-native';
 import styled, { useTheme } from 'styled-components/native';
 
+import { Button, IconButton } from '@/components/action';
 import {
-  Button,
-  Card,
   DataTable,
-  Divider,
-  IconButton,
-  Input,
-  Screen,
-  SearchInput,
-  Section,
   SegmentedControl,
-  SettingsRow,
-  Spacer,
-  Text,
   type DataTableColumn,
   type DataTableSortDirection,
+} from '@/components/display';
+import { EmptyState } from '@/components/feedback';
+import { Input, SearchInput } from '@/components/input';
+import { SettingsRow } from '@/components/list';
+import {
+  Divider,
+  Spacer,
+  Text,
   type DividerColor,
   type SpacerSize,
   type TextColor,
   type TextVariant,
-} from '@/components/common';
+} from '@/components/primitives';
+import { Card, Screen, Section } from '@/components/surface';
 
 const noop = () => {};
 
@@ -750,6 +757,37 @@ export default function SettingsScreen() {
           ]}
           value={themeMode}
           onChange={setThemeMode}
+        />
+      </Section>
+      <Spacer size="2xl" />
+
+      <Section title="EmptyState · standard">
+        <EmptyState
+          icon={<Inbox color={theme.colors.text.muted} size={32} />}
+          title="저장된 분석이 없습니다"
+          description="새로운 분석 조합을 저장해 보세요."
+        />
+      </Section>
+      <Spacer size="2xl" />
+
+      <Section title="EmptyState · standard + action">
+        <EmptyState
+          icon={<Search color={theme.colors.text.muted} size={32} />}
+          title="검색 결과가 없습니다"
+          description="다른 키워드로 다시 검색해 보세요."
+          action={{
+            label: '검색 초기화',
+            onPress: () => console.log('reset search'),
+          }}
+        />
+      </Section>
+      <Spacer size="2xl" />
+
+      <Section title="EmptyState · subtle (인라인 hint)">
+        <EmptyState
+          tone="subtle"
+          icon={<Star color={theme.colors.text.muted} size={32} />}
+          title="새로운 분석 조합을 저장해보세요"
         />
       </Section>
     </Screen>
