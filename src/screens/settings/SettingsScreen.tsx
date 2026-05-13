@@ -26,7 +26,7 @@ import {
   type DataTableColumn,
   type DataTableSortDirection,
 } from '@/components/display';
-import { EmptyState } from '@/components/feedback';
+import { EmptyState, ErrorView, LoadingView } from '@/components/feedback';
 import { Input, SearchInput } from '@/components/input';
 import { SettingsRow } from '@/components/list';
 import {
@@ -789,6 +789,46 @@ export default function SettingsScreen() {
           icon={<Star color={theme.colors.text.muted} size={32} />}
           title="새로운 분석 조합을 저장해보세요"
         />
+      </Section>
+      <Spacer size="2xl" />
+
+      <Section title="ErrorView · default">
+        <ErrorView
+          title="데이터를 불러오지 못했습니다"
+          description="네트워크 상태를 확인하고 다시 시도해 주세요."
+        />
+      </Section>
+      <Spacer size="2xl" />
+
+      <Section title="ErrorView · with action">
+        <ErrorView
+          title="요청에 실패했습니다"
+          description="서버에 일시적인 문제가 발생했을 수 있습니다."
+          action={{
+            label: '다시 시도',
+            onPress: () => console.log('retry'),
+          }}
+        />
+      </Section>
+      <Spacer size="2xl" />
+
+      <Section title="ErrorView · title only">
+        <ErrorView title="알 수 없는 오류가 발생했습니다" />
+      </Section>
+      <Spacer size="2xl" />
+
+      <Section title="LoadingView · spinner only (large)">
+        <LoadingView />
+      </Section>
+      <Spacer size="2xl" />
+
+      <Section title="LoadingView · with message (large)">
+        <LoadingView message="데이터를 불러오는 중..." />
+      </Section>
+      <Spacer size="2xl" />
+
+      <Section title="LoadingView · small + message">
+        <LoadingView size="small" message="처리 중..." />
       </Section>
     </Screen>
   );
