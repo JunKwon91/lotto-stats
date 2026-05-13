@@ -21,6 +21,7 @@ import {
   Screen,
   SearchInput,
   Section,
+  SegmentedControl,
   SettingsRow,
   Spacer,
   Text,
@@ -131,6 +132,10 @@ export default function SettingsScreen() {
   const [searchFilled, setSearchFilled] = useState('1043회');
   const [darkOn, setDarkOn] = useState(true);
   const [notifyOn, setNotifyOn] = useState(false);
+  const [sortOrder, setSortOrder] = useState<'newest' | 'oldest'>('newest');
+  const [themeMode, setThemeMode] = useState<'dark' | 'light' | 'system'>(
+    'dark',
+  );
   const [sortKey, setSortKey] = useState<string>('freq');
   const [sortDir, setSortDir] = useState<DataTableSortDirection>('desc');
 
@@ -720,6 +725,31 @@ export default function SettingsScreen() {
             setSortDir(d);
           }}
           keyExtractor={row => String(row.number)}
+        />
+      </Section>
+      <Spacer size="2xl" />
+
+      <Section title="SegmentedControl · 2 segments">
+        <SegmentedControl
+          segments={[
+            { value: 'newest', label: '최신순' },
+            { value: 'oldest', label: '오래된순' },
+          ]}
+          value={sortOrder}
+          onChange={setSortOrder}
+        />
+      </Section>
+      <Spacer size="2xl" />
+
+      <Section title="SegmentedControl · 3 segments">
+        <SegmentedControl
+          segments={[
+            { value: 'dark', label: '다크' },
+            { value: 'light', label: '라이트' },
+            { value: 'system', label: '시스템' },
+          ]}
+          value={themeMode}
+          onChange={setThemeMode}
         />
       </Section>
     </Screen>

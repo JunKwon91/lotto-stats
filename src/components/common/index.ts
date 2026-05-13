@@ -47,3 +47,9 @@ export type {
   DataTableAlign,
   DataTableSortDirection,
 } from './DataTable';
+
+export { default as SegmentedControl } from './SegmentedControl';
+export type {
+  SegmentedControlProps,
+  SegmentedControlSegment,
+} from './SegmentedControl';
