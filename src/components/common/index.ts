@@ -38,3 +38,12 @@ export type { SearchInputProps } from './SearchInput';
 
 export { default as SettingsRow } from './SettingsRow';
 export type { SettingsRowProps } from './SettingsRow';
+
+export { default as DataTable } from './DataTable';
+export type {
+  DataTableColumn,
+  DataTableProps,
+  DataTableDensity,
+  DataTableAlign,
+  DataTableSortDirection,
+} from './DataTable';

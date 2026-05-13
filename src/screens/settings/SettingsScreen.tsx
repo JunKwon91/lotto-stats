@@ -6,7 +6,7 @@
 // 본 설정 콘텐츠 작성 시 이 갤러리는 제거된다.
 // ============================================================================
 
-import { Fragment, useState } from 'react';
+import { Fragment, useMemo, useState } from 'react';
 import { View } from 'react-native';
 import { ChevronLeft, Plus, Settings, Star, X } from 'lucide-react-native';
 import styled, { useTheme } from 'styled-components/native';
@@ -14,6 +14,7 @@ import styled, { useTheme } from 'styled-components/native';
 import {
   Button,
   Card,
+  DataTable,
   Divider,
   IconButton,
   Input,
@@ -23,6 +24,8 @@ import {
   SettingsRow,
   Spacer,
   Text,
+  type DataTableColumn,
+  type DataTableSortDirection,
   type DividerColor,
   type SpacerSize,
   type TextColor,
@@ -61,6 +64,21 @@ const verticalSpacerSamples: { size: SpacerSize; label: string }[] = [
 const horizontalSpacerSamples: SpacerSize[] = ['xs', 'sm', 'md', 'lg'];
 
 const dividerColorSamples: DividerColor[] = ['subtle', 'default', 'strong'];
+
+type SampleRow = {
+  number: number;
+  freq: number;
+  lastSeen: number;
+  trend: 'hot' | 'cold' | null;
+};
+
+const sampleData: SampleRow[] = [
+  { number: 24, freq: 142, lastSeen: 12, trend: 'hot' },
+  { number: 7, freq: 138, lastSeen: 3, trend: null },
+  { number: 43, freq: 135, lastSeen: 28, trend: null },
+  { number: 11, freq: 120, lastSeen: 45, trend: 'cold' },
+  { number: 33, freq: 118, lastSeen: 7, trend: null },
+];
 
 const InverseBox = styled.View`
   padding: ${({ theme }) => theme.spacing.md}px;
@@ -113,6 +131,83 @@ export default function SettingsScreen() {
   const [searchFilled, setSearchFilled] = useState('1043회');
   const [darkOn, setDarkOn] = useState(true);
   const [notifyOn, setNotifyOn] = useState(false);
+  const [sortKey, setSortKey] = useState<string>('freq');
+  const [sortDir, setSortDir] = useState<DataTableSortDirection>('desc');
+
+  const sortedSampleData = useMemo(() => {
+    const sorted = [...sampleData];
+    sorted.sort((a, b) => {
+      const av = a[sortKey as keyof SampleRow];
+      const bv = b[sortKey as keyof SampleRow];
+      if (av === null && bv === null) return 0;
+      if (av === null) return 1;
+      if (bv === null) return -1;
+      if (av < bv) return sortDir === 'asc' ? -1 : 1;
+      if (av > bv) return sortDir === 'asc' ? 1 : -1;
+      return 0;
+    });
+    return sorted;
+  }, [sortKey, sortDir]);
+
+  const sampleColumns: DataTableColumn<SampleRow>[] = [
+    {
+      key: 'number',
+      header: '번호',
+      render: row => <Text variant="numericMd">{row.number}</Text>,
+      flex: 1,
+      sortable: true,
+    },
+    {
+      key: 'freq',
+      header: '빈도',
+      render: row => <Text variant="numericMd">{row.freq}×</Text>,
+      flex: 1,
+      sortable: true,
+    },
+    {
+      key: 'lastSeen',
+      header: '최근',
+      render: row => (
+        <Text variant="bodySm" color="secondary">
+          {row.lastSeen} days
+        </Text>
+      ),
+      flex: 1.2,
+      sortable: true,
+    },
+    {
+      key: 'trend',
+      header: '추세',
+      render: row => {
+        if (row.trend === 'hot') {
+          return (
+            <Text
+              variant="labelCaps"
+              style={{ color: theme.colors.state.hot }}
+            >
+              hot
+            </Text>
+          );
+        }
+        if (row.trend === 'cold') {
+          return (
+            <Text
+              variant="labelCaps"
+              style={{ color: theme.colors.state.cold }}
+            >
+              cold
+            </Text>
+          );
+        }
+        return (
+          <Text variant="bodySm" color="muted">
+            —
+          </Text>
+        );
+      },
+      flex: 0.8,
+    },
+  ];
   return (
     <Screen
       scroll
@@ -588,6 +683,44 @@ export default function SettingsScreen() {
             onPress={() => console.log('action pressed')}
           />
         </SettingsRowPanel>
+      </Section>
+      <Spacer size="2xl" />
+
+      <Section title="DataTable · default density">
+        <DataTable
+          columns={sampleColumns}
+          data={sampleData}
+          keyExtractor={row => String(row.number)}
+        />
+      </Section>
+      <Spacer size="2xl" />
+
+      <Section title="DataTable · compact density">
+        <DataTable
+          columns={sampleColumns}
+          data={sampleData}
+          density="compact"
+          keyExtractor={row => String(row.number)}
+        />
+      </Section>
+      <Spacer size="2xl" />
+
+      <Section title="DataTable · sortable">
+        <Text variant="labelSm" color="muted">
+          헤더 탭으로 asc/desc 토글
+        </Text>
+        <DataTable
+          columns={sampleColumns}
+          data={sortedSampleData}
+          sortable
+          sortKey={sortKey}
+          sortDirection={sortDir}
+          onSort={(k, d) => {
+            setSortKey(k);
+            setSortDir(d);
+          }}
+          keyExtractor={row => String(row.number)}
+        />
       </Section>
     </Screen>
   );
