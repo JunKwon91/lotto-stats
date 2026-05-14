@@ -28,6 +28,7 @@ import {
 } from '@/components/display';
 import { EmptyState, ErrorView, LoadingView } from '@/components/feedback';
 import { toast, useToastStore } from '@/stores/toastStore';
+import { dialog } from '@/stores/dialogStore';
 import { Input, SearchInput } from '@/components/input';
 import { SettingsRow } from '@/components/list';
 import {
@@ -902,6 +903,95 @@ export default function SettingsScreen() {
               duration: 0,
             })
           }
+        />
+      </Section>
+      <Spacer size="2xl" />
+
+      <Section title="Dialog · Info">
+        <Button
+          label="Show Info Dialog"
+          variant="primary"
+          onPress={async () => {
+            await dialog.info({
+              title: '네트워크 오류',
+              description:
+                '동행복권 서버에 연결할 수 없습니다. 네트워크 연결을 확인하고 다시 시도해주세요.',
+            });
+            console.log('Info 닫힘');
+          }}
+        />
+      </Section>
+      <Spacer size="2xl" />
+
+      <Section title="Dialog · Confirm">
+        <View style={{ gap: 8 }}>
+          <Button
+            label="Show Confirm (Destructive)"
+            variant="primary"
+            onPress={async () => {
+              const confirmed = await dialog.confirm({
+                title: '즐겨찾기 삭제',
+                description:
+                  '이 번호 조합을 즐겨찾기에서 제거합니다. 이 작업은 되돌릴 수 없습니다.',
+                destructive: true,
+                confirmLabel: '삭제',
+              });
+              console.log('Confirm 결과:', confirmed);
+            }}
+          />
+          <Button
+            label="Show Confirm (Default)"
+            variant="secondary"
+            onPress={async () => {
+              const confirmed = await dialog.confirm({
+                title: '회차 데이터 갱신',
+                description: '최신 회차 데이터를 가져옵니다.',
+              });
+              console.log('Confirm 결과:', confirmed);
+            }}
+          />
+        </View>
+      </Section>
+      <Spacer size="2xl" />
+
+      <Section title="Dialog · Prompt">
+        <Button
+          label="Show Prompt Dialog"
+          variant="primary"
+          onPress={async () => {
+            const value = await dialog.prompt({
+              title: '회차 번호 입력',
+              description: '조회할 회차 번호를 입력하세요.',
+              placeholder: '1100',
+              confirmLabel: '저장',
+            });
+            if (value !== null) {
+              console.log('Prompt 입력:', value);
+            } else {
+              console.log('Prompt 취소');
+            }
+          }}
+        />
+      </Section>
+      <Spacer size="2xl" />
+
+      <Section title="Dialog · 큐잉 테스트 (순차 표시)">
+        <Button
+          label="Show 2 Dialogs"
+          variant="secondary"
+          onPress={async () => {
+            const r1 = await dialog.confirm({
+              title: '첫 번째 (큐 테스트)',
+              description: '이 다이얼로그가 닫히면 두 번째가 표시됩니다.',
+            });
+            console.log('1번 결과:', r1);
+
+            await dialog.info({
+              title: '두 번째 (큐 진입)',
+              description: '큐에서 꺼내져 표시되었습니다.',
+            });
+            console.log('2번 완료');
+          }}
         />
       </Section>
     </Screen>

@@ -27,9 +27,10 @@
 //   - lg: height 48, padding 20, fontSize 17 (headlineSm)
 // radius: theme.radius.base (8)
 // Variant:
-//   - primary:   bg theme.colors.primary.action, text theme.colors.primary.onAction
-//   - secondary: bg transparent, border 1px theme.colors.border.strong,
-//                text theme.colors.text.secondary
+//   - primary:     bg theme.colors.primary.action, text theme.colors.primary.onAction
+//   - secondary:   bg transparent, border 1px theme.colors.border.strong,
+//                  text theme.colors.text.secondary
+//   - destructive: bg theme.colors.state.error, text 흰색 (Dialog confirm 삭제 등)
 //
 // [상태]
 // disabled: opacity 0.4 + onPress 차단
@@ -53,7 +54,9 @@ export type ButtonVariant =
   /** 진한 배경 + 밝은 텍스트 (메인 액션) */
   | 'primary'
   /** 투명 배경 + 보더 + secondary 텍스트 (보조 액션) */
-  | 'secondary';
+  | 'secondary'
+  /** state.error 배경 + 흰 텍스트 (삭제·되돌릴 수 없는 액션) */
+  | 'destructive';
 
 export type ButtonSize =
   /** 높이 32 · padding 12 · 14px 텍스트 */
@@ -130,7 +133,9 @@ export default function Button({
   const spinnerColor =
     variant === 'primary'
       ? theme.colors.primary.onAction
-      : theme.colors.text.secondary;
+      : variant === 'destructive'
+        ? '#FFFFFF'
+        : theme.colors.text.secondary;
 
   const computeStyle = ({
     pressed,
@@ -147,6 +152,8 @@ export default function Button({
     if (fullWidth) base.alignSelf = 'stretch';
     if (variant === 'primary') {
       base.backgroundColor = theme.colors.primary.action;
+    } else if (variant === 'destructive') {
+      base.backgroundColor = theme.colors.state.error;
     } else {
       base.borderWidth = 1;
       base.borderColor = theme.colors.border.strong;
@@ -178,6 +185,10 @@ export default function Button({
               variant={textVariant}
               style={{ color: theme.colors.primary.onAction }}
             >
+              {label}
+            </Text>
+          ) : variant === 'destructive' ? (
+            <Text variant={textVariant} style={{ color: '#FFFFFF' }}>
               {label}
             </Text>
           ) : (

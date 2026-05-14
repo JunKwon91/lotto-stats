@@ -42,7 +42,7 @@
 // 세로 보정은 불필요.
 // ============================================================================
 
-import { useState } from 'react';
+import { forwardRef, useState } from 'react';
 import { TextInput } from 'react-native';
 import type {
   StyleProp,
@@ -120,20 +120,23 @@ const Field = styled.View<{ $state: InputState }>`
  * @example
  * <Input label="회차 번호" error="유효하지 않은 회차입니다" />
  */
-export default function Input({
-  label,
-  value,
-  placeholder,
-  helper,
-  showHelper = true,
-  error,
-  disabled = false,
-  onChangeText,
-  style,
-  onFocus,
-  onBlur,
-  ...rest
-}: InputProps) {
+const Input = forwardRef<TextInput, InputProps>(function Input(
+  {
+    label,
+    value,
+    placeholder,
+    helper,
+    showHelper = true,
+    error,
+    disabled = false,
+    onChangeText,
+    style,
+    onFocus,
+    onBlur,
+    ...rest
+  },
+  ref,
+) {
   const theme = useTheme();
   const [isFocused, setIsFocused] = useState(false);
 
@@ -171,6 +174,7 @@ export default function Input({
       <Field $state={state}>
         <TextInput
           {...rest}
+          ref={ref}
           style={fieldInputStyle}
           value={value}
           placeholder={placeholder}
@@ -195,4 +199,6 @@ export default function Input({
       )}
     </Container>
   );
-}
+});
+
+export default Input;
