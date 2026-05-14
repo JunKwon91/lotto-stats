@@ -31,38 +31,54 @@
 //   action:  ChevronRight 아이콘
 // ============================================================================
 
-import { Pressable, StyleSheet, View } from 'react-native';
 import type { StyleProp, ViewStyle } from 'react-native';
 import { ChevronRight, ExternalLink } from 'lucide-react-native';
-import { useTheme } from 'styled-components/native';
+import styled, { useTheme } from 'styled-components/native';
 
 import Text from '@/components/primitives/Text';
 
-const styles = StyleSheet.create({
-  row: {
-    height: 56,
-    padding: 16,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: 12,
-  },
-  toggleTrack: {
-    width: 44,
-    height: 24,
-    padding: 2,
-    flexDirection: 'row',
-  },
-  toggleHandle: {
-    width: 20,
-    height: 20,
-  },
-  pickerRight: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-});
+const RowBase = styled.View`
+  height: 56px;
+  padding: 16px;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background-color: ${({ theme }) => theme.colors.surface.container};
+`;
+
+const PressableRowBase = styled.Pressable`
+  height: 56px;
+  padding: 16px;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+`;
+
+const ToggleTrack = styled.View<{ $on: boolean }>`
+  width: 44px;
+  height: 24px;
+  padding: 2px;
+  flex-direction: row;
+  border-radius: ${({ theme }) => theme.radius.full}px;
+  background-color: ${({ theme, $on }) =>
+    $on ? theme.colors.primary.action : theme.colors.border.default};
+`;
+
+const ToggleHandle = styled.View<{ $on: boolean }>`
+  width: 20px;
+  height: 20px;
+  border-radius: ${({ theme }) => theme.radius.full}px;
+  background-color: ${({ theme }) => theme.colors.primary.onAction};
+  margin-left: ${({ $on }) => ($on ? 20 : 0)}px;
+`;
+
+const PickerRight = styled.View`
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+`;
 
 type SettingsRowCommon = {
   /** 좌측에 표시되는 본문 라벨. */
@@ -106,32 +122,10 @@ export type SettingsRowProps = SettingsRowCommon &
   );
 
 function Toggle({ value }: { value: boolean }) {
-  const theme = useTheme();
-  const trackColor = value
-    ? theme.colors.primary.action
-    : theme.colors.border.default;
-  const handleMarginLeft = value ? 20 : 0;
   return (
-    <View
-      style={[
-        styles.toggleTrack,
-        {
-          borderRadius: theme.radius.full,
-          backgroundColor: trackColor,
-        },
-      ]}
-    >
-      <View
-        style={[
-          styles.toggleHandle,
-          {
-            borderRadius: theme.radius.full,
-            backgroundColor: theme.colors.primary.onAction,
-            marginLeft: handleMarginLeft,
-          },
-        ]}
-      />
-    </View>
+    <ToggleTrack $on={value}>
+      <ToggleHandle $on={value} />
+    </ToggleTrack>
   );
 }
 
@@ -158,7 +152,7 @@ export default function SettingsRow(props: SettingsRowProps) {
         return <Toggle value={props.value} />;
       case 'picker':
         return (
-          <View style={styles.pickerRight}>
+          <PickerRight>
             <Text variant="bodyBase" color="secondary">
               {props.value}
             </Text>
@@ -167,7 +161,7 @@ export default function SettingsRow(props: SettingsRowProps) {
               color={theme.colors.text.muted}
               strokeWidth={2}
             />
-          </View>
+          </PickerRight>
         );
       case 'link':
         return (
@@ -192,16 +186,10 @@ export default function SettingsRow(props: SettingsRowProps) {
 
   if (props.kind === 'default') {
     return (
-      <View
-        style={[
-          styles.row,
-          { backgroundColor: theme.colors.surface.container },
-          props.style,
-        ]}
-      >
+      <RowBase style={props.style}>
         {labelEl}
         {renderRight()}
-      </View>
+      </RowBase>
     );
   }
 
@@ -221,14 +209,13 @@ export default function SettingsRow(props: SettingsRowProps) {
         : 'button';
 
   return (
-    <Pressable
+    <PressableRowBase
       onPress={handlePress}
       accessibilityRole={accessibilityRole}
       accessibilityState={
         props.kind === 'toggle' ? { checked: props.value } : undefined
       }
       style={({ pressed }) => [
-        styles.row,
         {
           backgroundColor: pressed
             ? theme.colors.surface.containerHigh
@@ -239,6 +226,6 @@ export default function SettingsRow(props: SettingsRowProps) {
     >
       {labelEl}
       {renderRight()}
-    </Pressable>
+    </PressableRowBase>
   );
 }

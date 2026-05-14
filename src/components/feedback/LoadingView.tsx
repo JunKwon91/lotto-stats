@@ -24,9 +24,9 @@
 // - spinner가 유일 visual element
 // ============================================================================
 
-import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import { ActivityIndicator } from 'react-native';
 import type { StyleProp, ViewStyle } from 'react-native';
-import { useTheme } from 'styled-components/native';
+import styled, { useTheme } from 'styled-components/native';
 
 import Text from '@/components/primitives/Text';
 
@@ -41,17 +41,17 @@ export interface LoadingViewProps {
   style?: StyleProp<ViewStyle>;
 }
 
-const styles = StyleSheet.create({
-  container: {
-    paddingHorizontal: 24,
-    paddingVertical: 32,
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 12,
-    borderWidth: 1,
-  },
-});
+const Container = styled.View`
+  padding: 32px 24px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  border-width: 1px;
+  background-color: ${({ theme }) => theme.colors.surface.container};
+  border-color: ${({ theme }) => theme.colors.border.subtle};
+  border-radius: ${({ theme }) => theme.radius.lg}px;
+`;
 
 /**
  * 로딩 상태 표시.
@@ -67,23 +67,13 @@ export default function LoadingView({
   const theme = useTheme();
 
   return (
-    <View
-      style={[
-        styles.container,
-        {
-          backgroundColor: theme.colors.surface.container,
-          borderColor: theme.colors.border.subtle,
-          borderRadius: theme.radius.lg,
-        },
-        style,
-      ]}
-    >
+    <Container style={style}>
       <ActivityIndicator size={size} color={theme.colors.primary.action} />
       {message !== undefined && (
         <Text variant="bodyBase" color="muted" align="center">
           {message}
         </Text>
       )}
-    </View>
+    </Container>
   );
 }

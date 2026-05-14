@@ -30,9 +30,8 @@
 // Pressed 피드백: opacity 0.7 (Button·IconButton 패턴 일관)
 // ============================================================================
 
-import { Pressable, StyleSheet, View } from 'react-native';
 import type { StyleProp, ViewStyle } from 'react-native';
-import { useTheme } from 'styled-components/native';
+import styled, { useTheme } from 'styled-components/native';
 
 import Text from '@/components/primitives/Text';
 
@@ -52,23 +51,24 @@ export interface SegmentedControlProps<T extends string> {
   style?: StyleProp<ViewStyle>;
 }
 
-const styles = StyleSheet.create({
-  container: {
-    height: 36,
-    borderRadius: 10,
-    padding: 3,
-    flexDirection: 'row',
-    gap: 4,
-    borderWidth: 1,
-  },
-  segment: {
-    flex: 1,
-    height: 30,
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+const Container = styled.View`
+  height: 36px;
+  border-radius: 10px;
+  padding: 3px;
+  flex-direction: row;
+  gap: 4px;
+  border-width: 1px;
+  background-color: ${({ theme }) => theme.colors.surface.containerLow};
+  border-color: ${({ theme }) => theme.colors.border.subtle};
+`;
+
+const Segment = styled.Pressable`
+  flex: 1;
+  height: 30px;
+  border-radius: 8px;
+  align-items: center;
+  justify-content: center;
+`;
 
 /**
  * 분절 선택 컨트롤.
@@ -95,16 +95,7 @@ function SegmentedControl<T extends string>({
   const theme = useTheme();
 
   return (
-    <View
-      style={[
-        styles.container,
-        {
-          backgroundColor: theme.colors.surface.containerLow,
-          borderColor: theme.colors.border.subtle,
-        },
-        style,
-      ]}
-    >
+    <Container style={style}>
       {segments.map(seg => {
         const isActive = seg.value === value;
         const segBg = isActive
@@ -115,24 +106,24 @@ function SegmentedControl<T extends string>({
           : theme.colors.text.secondary;
 
         return (
-          <Pressable
+          <Segment
             key={seg.value}
             onPress={() => onChange(seg.value)}
             accessibilityRole="button"
             accessibilityState={{ selected: isActive }}
             accessibilityLabel={seg.label}
-            style={({ pressed }) => [
-              styles.segment,
-              { backgroundColor: segBg, opacity: pressed ? 0.7 : 1 },
-            ]}
+            style={({ pressed }) => ({
+              backgroundColor: segBg,
+              opacity: pressed ? 0.7 : 1,
+            })}
           >
             <Text variant="labelLg" style={{ color: textColor }}>
               {seg.label}
             </Text>
-          </Pressable>
+          </Segment>
         );
       })}
-    </View>
+    </Container>
   );
 }
 
