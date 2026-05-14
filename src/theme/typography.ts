@@ -77,6 +77,14 @@ export const typography = {
     lineHeight: 20,
   },
 
+  // bodyXs — 더 작은 본문 (Toast description, 보조 메타데이터)
+  bodyXs: {
+    fontFamily: 'Inter',
+    fontSize: 13,
+    fontWeight: '400' as const,
+    lineHeight: 18,
+  },
+
   // labelSm — 작은 라벨 (Bottom Tab 라벨, 작은 버튼 텍스트)
   // labelCaps와 달리 대문자 변환 없음 — 한글 라벨에 적합
   labelSm: {
