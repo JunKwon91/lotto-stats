@@ -100,6 +100,11 @@ const primitives = {
     onLight: '#0F172A', // 노랑/회색/초록 위에 올릴 텍스트 색 (어두운 색)
     onDark: '#FFFFFF', // 파랑/빨강 위에 올릴 텍스트 색 (흰색)
   },
+  // 오버레이 색상 — 모달 backdrop scrim 등
+  overlay: {
+    scrimLight: 'rgba(0, 0, 0, 0.6)', // 라이트 모드 backdrop
+    scrimDark: 'rgba(0, 0, 0, 0.7)', // 다크 모드 backdrop (더 진하게)
+  },
 } as const;
 
 // ----------------------------------------------------------------------------
@@ -169,6 +174,10 @@ export interface ColorsShape {
     error: string;
     info: string;
   };
+  // overlay = 모달 backdrop·scrim 등 화면 위 오버레이 색상.
+  overlay: {
+    scrim: string;
+  };
   // ball = 로또 공 5색 (모드 무관, primitives.ball을 그대로 참조).
   ball: {
     yellow: string;
@@ -229,6 +238,9 @@ export const lightColors: ColorsShape = {
     error: primitives.state.errorLight, // 라이트 모드는 진한 빨강 사용
     info: primitives.state.infoLight, // 라이트 모드는 진한 파랑 사용
   },
+  overlay: {
+    scrim: primitives.overlay.scrimLight,
+  },
   ball: primitives.ball, // 공 색상은 모드와 무관 → 그대로 참조
 };
 
@@ -279,6 +291,9 @@ export const darkColors: ColorsShape = {
     warning: primitives.state.warning,
     error: primitives.state.errorDark, // 다크 모드는 밝은 살구빨강 (가독성)
     info: primitives.state.infoDark, // 다크 모드는 옅은 파랑 사용
+  },
+  overlay: {
+    scrim: primitives.overlay.scrimDark,
   },
   ball: primitives.ball,
 };
