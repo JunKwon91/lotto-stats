@@ -27,6 +27,7 @@ import {
   type DataTableSortDirection,
 } from '@/components/display';
 import { EmptyState, ErrorView, LoadingView } from '@/components/feedback';
+import { toast, useToastStore } from '@/stores/toastStore';
 import { Input, SearchInput } from '@/components/input';
 import { SettingsRow } from '@/components/list';
 import {
@@ -829,6 +830,79 @@ export default function SettingsScreen() {
 
       <Section title="LoadingView · small + message">
         <LoadingView size="small" message="처리 중..." />
+      </Section>
+      <Spacer size="2xl" />
+
+      <Section title="Toast · 3 types">
+        <View style={{ gap: 8 }}>
+          <Button
+            label="Success Toast"
+            variant="primary"
+            onPress={() =>
+              toast.success('즐겨찾기에 추가됨', '5개 번호가 저장되었습니다.')
+            }
+          />
+          <Button
+            label="Error Toast"
+            variant="primary"
+            onPress={() =>
+              toast.error('저장 실패', '네트워크 연결을 확인해주세요.')
+            }
+          />
+          <Button
+            label="Info Toast"
+            variant="primary"
+            onPress={() =>
+              toast.info(
+                '새 회차 데이터 도착',
+                '1100회차 결과가 업데이트되었습니다.',
+              )
+            }
+          />
+        </View>
+      </Section>
+      <Spacer size="2xl" />
+
+      <Section title="Toast · 순차 표시 (3개 큐)">
+        <Button
+          label="Show 3 Toasts (순차)"
+          variant="secondary"
+          onPress={() => {
+            toast.success('첫 번째');
+            toast.info('두 번째');
+            toast.error('세 번째');
+          }}
+        />
+      </Section>
+      <Spacer size="2xl" />
+
+      <Section title="Toast · 큐 초과 (4개 → 가장 오래된 것 제거)">
+        <Button
+          label="Show 4 Toasts (queue overflow)"
+          variant="secondary"
+          onPress={() => {
+            toast.success('첫 번째 (제거됨)');
+            toast.info('두 번째');
+            toast.error('세 번째');
+            toast.info('네 번째 (최신, 보존)');
+          }}
+        />
+      </Section>
+      <Spacer size="2xl" />
+
+      <Section title="Toast · 수동 닫기 (duration 0)">
+        <Button
+          label="Show Persistent Toast"
+          variant="secondary"
+          onPress={() =>
+            useToastStore.getState().show({
+              type: 'info',
+              title: '수동 닫기 토스트',
+              description: 'X 버튼을 눌러 닫으세요',
+              duration: 0,
+            })
+          }
+        />
       </Section>
     </Screen>
   );

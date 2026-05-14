@@ -87,6 +87,8 @@ const primitives = {
     warning: '#F59E0B', // 경고 (주황)
     errorLight: '#DC2626', // 에러 — 라이트 모드용 (진한 빨강)
     errorDark: '#FFB4AB', // 에러 — 다크 모드용 (밝은 살구빨강)
+    infoLight: '#3B82F6', // 정보 — 라이트 모드용 (진한 파랑)
+    infoDark: '#ADC6FF', // 정보 — 다크 모드용 (옅은 파랑)
   },
   // 로또 공 색상 — 한국 로또 6/45의 공식 색상 매핑 (모드 무관)
   ball: {
@@ -165,6 +167,7 @@ export interface ColorsShape {
     success: string;
     warning: string;
     error: string;
+    info: string;
   };
   // ball = 로또 공 5색 (모드 무관, primitives.ball을 그대로 참조).
   ball: {
@@ -224,6 +227,7 @@ export const lightColors: ColorsShape = {
     success: primitives.state.success,
     warning: primitives.state.warning,
     error: primitives.state.errorLight, // 라이트 모드는 진한 빨강 사용
+    info: primitives.state.infoLight, // 라이트 모드는 진한 파랑 사용
   },
   ball: primitives.ball, // 공 색상은 모드와 무관 → 그대로 참조
 };
@@ -274,6 +278,7 @@ export const darkColors: ColorsShape = {
     success: primitives.state.success,
     warning: primitives.state.warning,
     error: primitives.state.errorDark, // 다크 모드는 밝은 살구빨강 (가독성)
+    info: primitives.state.infoDark, // 다크 모드는 옅은 파랑 사용
   },
   ball: primitives.ball,
 };

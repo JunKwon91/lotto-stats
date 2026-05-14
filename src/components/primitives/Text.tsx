@@ -47,6 +47,8 @@ export type TextVariant =
   | 'bodyBase'
   /** Inter 14 / 400 · 보조 본문, 데이터 테이블 셀 */
   | 'bodySm'
+  /** Inter 13 / 400 · Toast description, 보조 메타데이터 */
+  | 'bodyXs'
   /** Inter 11 / 600 · Bottom Tab 라벨 */
   | 'labelSm'
   /** Inter 13 / 600 · Input·Settings Row 라벨 */
