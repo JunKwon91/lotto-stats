@@ -30,16 +30,11 @@
 // Title (subtle):   bodyBase + text.muted
 // Description: bodyBase + text.muted (양 tone 공통)
 // Action: Button variant='primary' (호출처가 size 등은 기본값 사용)
-//
-// [Figma 정합화 메모]
-// Figma 74:533의 원본 radius는 14, 본 컴포넌트는 token 일관성 위해 radius.lg(16)
-// 사용. Figma 동기화 시 radius 16으로 정합 권장.
 // ============================================================================
 
-import { StyleSheet, View } from 'react-native';
 import type { ReactNode } from 'react';
 import type { StyleProp, ViewStyle } from 'react-native';
-import { useTheme } from 'styled-components/native';
+import styled from 'styled-components/native';
 
 import Button from '@/components/action/Button';
 import Text from '@/components/primitives/Text';
@@ -71,17 +66,17 @@ export interface EmptyStateProps {
   style?: StyleProp<ViewStyle>;
 }
 
-const styles = StyleSheet.create({
-  container: {
-    paddingHorizontal: 24,
-    paddingVertical: 32,
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 12,
-    borderWidth: 1,
-  },
-});
+const Container = styled.View`
+  padding: 32px 24px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  border-width: 1px;
+  background-color: ${({ theme }) => theme.colors.surface.container};
+  border-color: ${({ theme }) => theme.colors.border.subtle};
+  border-radius: ${({ theme }) => theme.radius.lg}px;
+`;
 
 /**
  * 빈 상태 표시.
@@ -102,22 +97,11 @@ export default function EmptyState({
   tone = 'standard',
   style,
 }: EmptyStateProps) {
-  const theme = useTheme();
   const titleVariant = tone === 'subtle' ? 'bodyBase' : 'headlineSm';
   const titleColor = tone === 'subtle' ? 'muted' : 'primary';
 
   return (
-    <View
-      style={[
-        styles.container,
-        {
-          backgroundColor: theme.colors.surface.container,
-          borderColor: theme.colors.border.subtle,
-          borderRadius: theme.radius.lg,
-        },
-        style,
-      ]}
-    >
+    <Container style={style}>
       {icon}
       <Text variant={titleVariant} color={titleColor} align="center">
         {title}
@@ -134,6 +118,6 @@ export default function EmptyState({
           onPress={action.onPress}
         />
       )}
-    </View>
+    </Container>
   );
 }

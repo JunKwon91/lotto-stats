@@ -50,11 +50,11 @@
 // 일으킬 수 있다.
 // ============================================================================
 
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 import type { ReactNode } from 'react';
 import type { StyleProp, ViewStyle } from 'react-native';
 import { ChevronDown, ChevronUp } from 'lucide-react-native';
-import { useTheme } from 'styled-components/native';
+import styled, { useTheme } from 'styled-components/native';
 
 import Text from '@/components/primitives/Text';
 
@@ -115,28 +115,38 @@ const ROW_HEIGHT = {
   compact: { header: 32, body: 36 },
 } as const;
 
-const styles = StyleSheet.create({
-  container: {
-    borderWidth: 1,
-    overflow: 'hidden',
-  },
-  headerRow: {
-    flexDirection: 'row',
-    paddingHorizontal: 12,
-    alignItems: 'center',
-    borderBottomWidth: 1,
-  },
-  bodyRow: {
-    flexDirection: 'row',
-    paddingHorizontal: 12,
-    alignItems: 'center',
-  },
-  cellContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-  },
-});
+const Container = styled.View`
+  border-width: 1px;
+  overflow: hidden;
+  background-color: ${({ theme }) => theme.colors.surface.container};
+  border-color: ${({ theme }) => theme.colors.border.subtle};
+  border-radius: ${({ theme }) => theme.radius.md}px;
+`;
+
+const HeaderRow = styled.View<{ $height: number }>`
+  flex-direction: row;
+  padding: 0 12px;
+  align-items: center;
+  border-bottom-width: 1px;
+  height: ${({ $height }) => $height}px;
+  background-color: ${({ theme }) => theme.colors.surface.containerLow};
+  border-bottom-color: ${({ theme }) => theme.colors.border.subtle};
+`;
+
+const BodyRow = styled.View<{ $height: number; $isLast: boolean }>`
+  flex-direction: row;
+  padding: 0 12px;
+  align-items: center;
+  height: ${({ $height }) => $height}px;
+  border-bottom-width: ${({ $isLast }) => ($isLast ? 0 : 1)}px;
+  border-bottom-color: ${({ theme }) => theme.colors.border.subtle};
+`;
+
+const CellContent = styled.View`
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+`;
 
 function justifyForAlign(align: DataTableAlign): ViewStyle['justifyContent'] {
   if (align === 'right') return 'flex-end';
@@ -168,16 +178,7 @@ function DataTable<T>({
   };
 
   const renderHeader = () => (
-    <View
-      style={[
-        styles.headerRow,
-        {
-          height: heights.header,
-          backgroundColor: theme.colors.surface.containerLow,
-          borderBottomColor: theme.colors.border.subtle,
-        },
-      ]}
-    >
+    <HeaderRow $height={heights.header}>
       {columns.map(col => {
         const align = col.align ?? 'left';
         const flex = col.flex ?? 1;
@@ -208,12 +209,12 @@ function DataTable<T>({
         ) : null;
 
         const inner = (
-          <View style={styles.cellContent}>
+          <CellContent>
             <Text variant="labelCaps" color="muted">
               {col.header}
             </Text>
             {indicator}
-          </View>
+          </CellContent>
         );
 
         if (isSortable) {
@@ -235,26 +236,15 @@ function DataTable<T>({
           </View>
         );
       })}
-    </View>
+    </HeaderRow>
   );
 
   const renderBodyRow = (row: T, idx: number) => {
     const isLast = idx === data.length - 1;
     const key = keyExtractor ? keyExtractor(row, idx) : String(idx);
-    const rowBorderWidth = isLast ? 0 : 1;
 
     return (
-      <View
-        key={key}
-        style={[
-          styles.bodyRow,
-          {
-            height: heights.body,
-            borderBottomWidth: rowBorderWidth,
-            borderBottomColor: theme.colors.border.subtle,
-          },
-        ]}
-      >
+      <BodyRow key={key} $height={heights.body} $isLast={isLast}>
         {columns.map(col => {
           const align = col.align ?? 'left';
           const flex = col.flex ?? 1;
@@ -270,25 +260,15 @@ function DataTable<T>({
             </View>
           );
         })}
-      </View>
+      </BodyRow>
     );
   };
 
   return (
-    <View
-      style={[
-        styles.container,
-        {
-          backgroundColor: theme.colors.surface.container,
-          borderColor: theme.colors.border.subtle,
-          borderRadius: theme.radius.md,
-        },
-        style,
-      ]}
-    >
+    <Container style={style}>
       {renderHeader()}
       {data.map(renderBodyRow)}
-    </View>
+    </Container>
   );
 }
 
