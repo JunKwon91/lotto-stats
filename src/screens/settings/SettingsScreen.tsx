@@ -195,10 +195,7 @@ export default function SettingsScreen() {
       render: row => {
         if (row.trend === 'hot') {
           return (
-            <Text
-              variant="labelCaps"
-              style={{ color: theme.colors.state.hot }}
-            >
+            <Text variant="labelCaps" style={{ color: theme.colors.state.hot }}>
               hot
             </Text>
           );
@@ -424,18 +421,48 @@ export default function SettingsScreen() {
 
       <Section title="Button · variants × sizes">
         <Card>
-          <Button label="Primary sm" variant="primary" size="sm" onPress={noop} />
+          <Button
+            label="Primary sm"
+            variant="primary"
+            size="sm"
+            onPress={noop}
+          />
           <Spacer size="sm" />
-          <Button label="Primary md" variant="primary" size="md" onPress={noop} />
+          <Button
+            label="Primary md"
+            variant="primary"
+            size="md"
+            onPress={noop}
+          />
           <Spacer size="sm" />
-          <Button label="Primary lg" variant="primary" size="lg" onPress={noop} />
+          <Button
+            label="Primary lg"
+            variant="primary"
+            size="lg"
+            onPress={noop}
+          />
         </Card>
         <Card>
-          <Button label="Secondary sm" variant="secondary" size="sm" onPress={noop} />
+          <Button
+            label="Secondary sm"
+            variant="secondary"
+            size="sm"
+            onPress={noop}
+          />
           <Spacer size="sm" />
-          <Button label="Secondary md" variant="secondary" size="md" onPress={noop} />
+          <Button
+            label="Secondary md"
+            variant="secondary"
+            size="md"
+            onPress={noop}
+          />
           <Spacer size="sm" />
-          <Button label="Secondary lg" variant="secondary" size="lg" onPress={noop} />
+          <Button
+            label="Secondary lg"
+            variant="secondary"
+            size="lg"
+            onPress={noop}
+          />
         </Card>
       </Section>
       <Spacer size="2xl" />
@@ -452,9 +479,7 @@ export default function SettingsScreen() {
           <Button
             label="추가하기"
             size="sm"
-            leftIcon={
-              <Plus size={14} color={theme.colors.primary.onAction} />
-            }
+            leftIcon={<Plus size={14} color={theme.colors.primary.onAction} />}
             onPress={noop}
           />
           <Spacer size="sm" />
@@ -462,9 +487,7 @@ export default function SettingsScreen() {
             label="추가하기"
             variant="secondary"
             size="sm"
-            leftIcon={
-              <Plus size={14} color={theme.colors.text.secondary} />
-            }
+            leftIcon={<Plus size={14} color={theme.colors.text.secondary} />}
             onPress={noop}
           />
         </Card>
