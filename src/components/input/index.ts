@@ -1,5 +1,7 @@
-export { default as Input } from './Input';
-export type { InputProps, InputState } from './Input';
-
-export { default as SearchInput } from './SearchInput';
-export type { SearchInputProps } from './SearchInput';
+export {
+  Input,
+  type InputProps,
+  type InputState,
+  SearchInput,
+  type SearchInputProps,
+} from '@junkwon91/rn-design-system';
