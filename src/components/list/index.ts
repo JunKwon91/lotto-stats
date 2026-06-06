@@ -1,2 +1,4 @@
-export { default as SettingsRow } from './SettingsRow';
-export type { SettingsRowProps } from './SettingsRow';
+export {
+  SettingsRow,
+  type SettingsRowProps,
+} from '@junkwon91/rn-design-system';

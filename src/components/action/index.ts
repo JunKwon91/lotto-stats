@@ -1,9 +1,10 @@
-export { default as Button } from './Button';
-export type { ButtonProps, ButtonVariant, ButtonSize } from './Button';
-
-export { default as IconButton } from './IconButton';
-export type {
-  IconButtonProps,
-  IconButtonSize,
-  IconButtonColor,
-} from './IconButton';
+export {
+  Button,
+  type ButtonProps,
+  type ButtonVariant,
+  type ButtonSize,
+  IconButton,
+  type IconButtonProps,
+  type IconButtonSize,
+  type IconButtonColor,
+} from '@junkwon91/rn-design-system';

@@ -1,14 +1,11 @@
-export { default as DataTable } from './DataTable';
-export type {
-  DataTableColumn,
-  DataTableProps,
-  DataTableDensity,
-  DataTableAlign,
-  DataTableSortDirection,
-} from './DataTable';
-
-export { default as SegmentedControl } from './SegmentedControl';
-export type {
-  SegmentedControlProps,
-  SegmentedControlSegment,
-} from './SegmentedControl';
+export {
+  DataTable,
+  type DataTableColumn,
+  type DataTableProps,
+  type DataTableDensity,
+  type DataTableAlign,
+  type DataTableSortDirection,
+  SegmentedControl,
+  type SegmentedControlProps,
+  type SegmentedControlSegment,
+} from '@junkwon91/rn-design-system';
