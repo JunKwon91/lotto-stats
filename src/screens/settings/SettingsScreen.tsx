@@ -27,8 +27,7 @@ import {
   type DataTableSortDirection,
 } from '@/components/display';
 import { EmptyState, ErrorView, LoadingView } from '@/components/feedback';
-import { toast, useToastStore } from '@/stores/toastStore';
-import { dialog } from '@/stores/dialogStore';
+import { toast, useToastStore, dialog } from '@junkwon91/rn-design-system';
 import { Input, SearchInput } from '@/components/input';
 import { SettingsRow } from '@/components/list';
 import {

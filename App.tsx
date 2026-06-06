@@ -22,7 +22,7 @@ import { ThemeProvider } from 'styled-components/native';
 import RootNavigator from '@/navigation/RootNavigator';
 import { queryClient } from '@/lib/queryClient';
 import { darkTheme, lightTheme } from '@/theme';
-import { DialogHost, ToastHost } from '@/components/feedback';
+import { DialogHost, ToastHost } from '@junkwon91/rn-design-system';
 
 export default function App() {
   // 시스템 색상 모드 감지. null/undefined는 'light'로 폴백.
