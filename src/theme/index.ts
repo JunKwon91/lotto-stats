@@ -3,15 +3,17 @@
 // ============================================================================
 //
 // 라이브러리(@junkwon91/rn-design-system)의 AppTheme/Colors/lightTheme/
-// darkTheme를 베이스로 하고, 로또 도메인 토큰(state.hot/cold, ball)을
-// 확장한 LottoTheme/LottoColors를 정의한다.
+// darkTheme를 베이스로 하고, 로또 도메인 토큰(state.hot/cold, ball,
+// typography.ballNumber)을 확장한 LottoTheme/LottoColors/LottoTypography를
+// 정의한다.
 //
 // [구조]
 //   라이브러리 AppTheme    ← mode/colors/spacing/radius/typography/interaction
 //                            colors: ColorsShape(bg/surface/text/border/
 //                                                primary/state/overlay)
-//   LottoTheme            ← AppTheme의 colors만 LottoColors로 교체
+//   LottoTheme            ← AppTheme의 colors/typography를 도메인 확장
 //   LottoColors           ← ColorsShape + state에 hot/cold 추가 + ball
+//   LottoTypography       ← 라이브러리 typography + ballNumber
 //
 // 라이브러리가 styled-components DefaultTheme augmentation을 이미 갖고
 // 있으므로, 로또 styled.d.ts는 DefaultTheme를 LottoTheme로 확장한다.
@@ -30,6 +32,7 @@ import {
 } from '@junkwon91/rn-design-system';
 
 import { lottoStateExtension, lottoBallColors } from './colors';
+import { lottoTypographyExtension } from './typography';
 
 export type ThemeMode = AppTheme['mode'];
 
@@ -39,10 +42,15 @@ export interface LottoColors extends Omit<Colors, 'state'> {
   ball: typeof lottoBallColors;
 }
 
-// 로또 확장 AppTheme — colors만 LottoColors로 교체, 나머지(spacing/radius/
-// typography/interaction)는 라이브러리 그대로.
-export interface LottoTheme extends Omit<AppTheme, 'colors'> {
+// 로또 확장 Typography — 라이브러리 typography에 도메인 토큰 ballNumber 추가.
+export type LottoTypography = AppTheme['typography'] &
+  typeof lottoTypographyExtension;
+
+// 로또 확장 AppTheme — colors/typography만 도메인 확장, 나머지(spacing/radius/
+// interaction)는 라이브러리 그대로.
+export interface LottoTheme extends Omit<AppTheme, 'colors' | 'typography'> {
   colors: LottoColors;
+  typography: LottoTypography;
 }
 
 export const lightTheme: LottoTheme = {
@@ -52,6 +60,7 @@ export const lightTheme: LottoTheme = {
     state: { ...libLightTheme.colors.state, ...lottoStateExtension },
     ball: lottoBallColors,
   },
+  typography: { ...libLightTheme.typography, ...lottoTypographyExtension },
 };
 
 export const darkTheme: LottoTheme = {
@@ -61,6 +70,7 @@ export const darkTheme: LottoTheme = {
     state: { ...libDarkTheme.colors.state, ...lottoStateExtension },
     ball: lottoBallColors,
   },
+  typography: { ...libDarkTheme.typography, ...lottoTypographyExtension },
 };
 
 // 라이브러리 타입 재-export — 컴포넌트가 @/theme에서 한 번에 가져갈 수 있도록.
