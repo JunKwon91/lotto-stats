@@ -109,3 +109,18 @@ UI 컴포넌트·테마 토큰·imperative 호스트 등 디자인 시스템 레
 - **포기한 옵션**: devlog 유지(코드 변경 시 추적 단절), 03~05만 라이브러리로 이동(이미 ADR로 존재해 불필요).
 - **근거**: ADR은 "왜 이 선택을 했나"를 코드 변경과 무관하게 보존 → 유지보수·재개 시 설계 원칙 추적이 끊기지 않음. 라이브러리가 같은 방식으로 검증됨.
 - **결과**: `01-project-setup`·`02-data-pipeline`의 핵심 결정은 ADR-01·02·03·05·06·07로 흡수. 두 원본 문서는 서사형 1차 자료로 당분간 보존하되, 신규 결정은 모두 이 `DECISIONS.md`에 ADR로 추가한다.
+
+---
+
+## ADR-10: 카드 스타일 사용 규칙 — 리스트=Filled, 패널=Outlined
+
+- **상황**: v2 화면들의 카드 스타일이 제각각이었다 — 테두리 유/무 혼재, `border/divider` vs `border/subtle` 혼용, radius 12/14/16 혼용. 카드가 컴포넌트화되지 않아 화면마다 프레임을 개별로 그렸기 때문. 한편 Figma는 퍼블리시된 인스턴스 안에 임의 자식(공·차트)을 중첩할 수 없어, 콘텐츠가 든 카드를 DS Card 인스턴스로 직접 만들 수 없다.
+- **선택**: DS Card의 두 Variant(라이브러리 ADR-41)를 기준으로 앱 카드를 용도별로 통일한다.
+  - **Filled(무테)** — 반복되는 리스트 항목: 최근 당첨 내역, RoundList 회차, Favorites 조합, Recommend 알고리즘 옵션.
+  - **Outlined(테두리)** — 독립 정보 패널: 당첨결과 Hero·TOP5, Statistics/StatsDetail 분석 카드, RoundDetail 당첨번호·테이블, Recommend 최근 추이, FavoriteAdd 선택 카드.
+  - 공통 스펙: fill `surface/container` · radius 16 · Outlined는 `border/subtle` 1px.
+  - 콘텐츠 카드(공·차트 포함)는 인스턴스 대신 이 스펙에 맞춘 프레임으로 구성(스펙-매칭).
+  - Settings 그룹은 리스트 컨테이너라 Filled 유지.
+- **포기한 옵션**: 전부 한 스타일로 통일(전부 Outlined면 리스트가 시끄럽고, 전부 Filled면 패널 경계 상실), DS Card 인스턴스로 전면 교체(Figma 콘텐츠 중첩 제약으로 불가).
+- **근거**: 테두리 유무에 "독립 패널 vs 반복 리스트"라는 의미를 부여하면 신규 화면에서도 고민 없이 자동 결정된다. 반복 리스트는 간격+반복이 이미 그룹을 형성하므로 테두리가 불필요하고, 패널은 테두리로 경계를 잡아준다.
+- **결과**: 전 화면(9개) 카드 시각 일관화. 규칙은 Figma Foundations "Card 사용 규칙" 패턴 섹션과 `docs/DESIGN.md`의 Cards 섹션에도 기재. variant 자체의 정의·근거는 라이브러리 ADR-41.
