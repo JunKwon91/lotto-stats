@@ -43,7 +43,7 @@ UI 컴포넌트·테마 토큰·imperative 호스트 등 디자인 시스템 레
 ## ADR-04: UI 컴포넌트를 외부 디자인 시스템 라이브러리로 분리
 
 - **상황**: 초기에는 Screen·Card·Button·IconButton·Input·DataTable·Toast·Dialog 등 UI 컴포넌트를 앱 `src/components/` 안에 직접 구현했음.
-- **선택**: 자체 컴포넌트 전량을 **`@junkwon91/rn-design-system`**(별도 저장소)으로 추출하고, 앱은 이를 의존성으로 설치해 **re-export만** 한다. 버전은 **GitHub 태그 `v2.0.0`로 고정**.
+- **선택**: 자체 컴포넌트 전량을 **`@junkwon91/rn-design-system`**(별도 저장소)으로 추출하고, 앱은 이를 의존성으로 설치해 **re-export만** 한다. 버전은 **GitHub 태그로 고정**(현재 `v2.1.0`).
 - **포기한 옵션**: 앱 내부 컴포넌트 유지, npm 레지스트리 배포(미배포 — GitHub 태그 설치).
 - **근거**:
   - 디자인 시스템은 Figma Variable Library와 1:1 정합이 목표라 앱 도메인 로직과 변경 주기·관심사가 다름 → 별도 패키지가 적합.
@@ -53,6 +53,7 @@ UI 컴포넌트·테마 토큰·imperative 호스트 등 디자인 시스템 레
   - `src/components/{primitives,surface,action,input,display,list,feedback}/index.ts`는 전부 라이브러리 re-export.
   - 앱 측에 남길 도메인 컴포넌트는 `components/lotto/`(로또 공 등), `components/charts/`(통계 차트)로 한정.
   - 이 결정으로 컴포넌트 제작 과정 기록은 라이브러리 저장소의 ADR로 이관됨 → 앱 docs의 컴포넌트 devlog는 폐기(ADR-09).
+  - 고정 태그 이력: `v2.0.0` → `v2.1.0`(OptionCard·커스텀 아이콘 시스템·SettingsRow custom/divider 추가, Card variant outlined/filled 재정의). 라이브러리 릴리스 시 이 태그를 올리고 재설치한다.
 
 ---
 
