@@ -316,13 +316,13 @@ export default function SettingsScreen() {
 
       <Section title="Card">
         <Text variant="labelSm" color="muted">
-          variant (default · elevated)
+          variant (outlined · filled)
         </Text>
         <Card>
-          <Text>default variant (보더 있음)</Text>
+          <Text>outlined variant (보더 있음)</Text>
         </Card>
-        <Card variant="elevated">
-          <Text>elevated variant (보더 없음)</Text>
+        <Card variant="filled">
+          <Text>filled variant (보더 없음)</Text>
         </Card>
         <Text variant="labelSm" color="muted">
           density (default · compact)
