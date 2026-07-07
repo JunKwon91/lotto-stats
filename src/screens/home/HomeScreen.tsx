@@ -1,20 +1,22 @@
 // ============================================================================
-// HomeScreen — 홈 (최신 회차 Hero + 최근 당첨 내역)
+// HomeScreen — 홈 (헤더 + 최신 회차 Hero + 최근 당첨 내역 + 번호 분석 안내)
 // ============================================================================
 //
-// useLottoData(캐시 우선)로 회차 데이터를 받아:
+// 상단 고정 AppHeader 아래로 스크롤 본문:
 //   - Hero Card: 최신 회차 당첨결과 + 1등 총 당첨금 + 상세보기
-//   - 최근 당첨 내역: 최신 제외 직전 3회차 (회차/날짜 + 당첨번호)
+//   - 최근 당첨 내역: 최신 제외 직전 3회차
+//   - 번호 분석 안내 카드 → StatsDetail(출현 빈도)
 //   1등 총 당첨금 = prizes[0].winners × prizes[0].prizePerWinner
-// 번호 분석 카드는 다음 단계에서 붙인다.
 // ============================================================================
 
 import { useNavigation } from '@react-navigation/native';
 import { ChevronRight } from 'lucide-react-native';
+import { ScrollView } from 'react-native';
 import styled, { useTheme } from 'styled-components/native';
 
 import { Button } from '@/components/action';
 import { ErrorView, LoadingView } from '@/components/feedback';
+import { AppHeader } from '@/components/layout';
 import { LottoBallSet } from '@/components/lotto';
 import { Text } from '@/components/primitives';
 import { Card, Screen } from '@/components/surface';
@@ -69,7 +71,24 @@ const SeeAll = styled.Pressable`
 `;
 
 const ListContainer = styled.View`
+  gap: ${({ theme }) => theme.spacing.md}px;
+`;
+
+// 번호 분석 안내 카드 — 카드 전체가 탭 영역(Card는 onPress 미지원 → Pressable 래핑).
+const AnalysisCardPress = styled.Pressable`
+  margin-top: ${({ theme }) => theme.spacing.xl}px;
+`;
+
+const AnalysisColumn = styled.View`
   gap: ${({ theme }) => theme.spacing.sm}px;
+`;
+
+// 로딩/에러 상태 영역 (헤더 아래).
+const StateArea = styled.View`
+  flex: 1;
+  padding-left: ${({ theme }) => theme.spacing.containerMargin}px;
+  padding-right: ${({ theme }) => theme.spacing.containerMargin}px;
+  padding-top: ${({ theme }) => theme.spacing.lg}px;
 `;
 
 export default function HomeScreen() {
@@ -82,97 +101,125 @@ export default function HomeScreen() {
   const latest: LottoRound | undefined =
     sorted.find(r => r.drawNo === data?.latestRound) ?? sorted[0];
 
-  // 캐시·fetch 모두 데이터 없음 → 로딩/에러 처리.
-  if (!latest) {
-    return (
-      <Screen>
-        {isError ? (
-          <ErrorView
-            title="데이터를 불러오지 못했어요"
-            description="네트워크를 확인하고 다시 시도해 주세요."
-            action={{ label: '다시 시도', onPress: () => refetch() }}
-          />
-        ) : (
-          <LoadingView message="로또 데이터를 불러오는 중..." />
-        )}
-      </Screen>
-    );
-  }
-
   // 최신 제외 직전 3회차.
-  const recent = sorted.filter(r => r.drawNo !== latest.drawNo).slice(0, 3);
+  const recent = latest
+    ? sorted.filter(r => r.drawNo !== latest.drawNo).slice(0, 3)
+    : [];
 
-  const firstPrize = latest.prizes?.[0];
+  const firstPrize = latest?.prizes?.[0];
   const firstPrizeTotal = firstPrize
     ? firstPrize.winners * firstPrize.prizePerWinner
     : undefined;
 
   return (
-    <Screen scroll>
-      {/* Hero — 최신 회차 */}
-      <Card>
-        <HeaderRow>
-          <Text variant="headlineMd">{latest.drawNo}회 당첨결과</Text>
-          <Text variant="bodySm" color="muted">
-            {formatDate(latest.date)}
-          </Text>
-        </HeaderRow>
+    <Screen edges={['top']} padded={false}>
+      <AppHeader />
 
-        <LottoBallSet
-          numbers={latest.numbers}
-          bonusNo={latest.bonusNo}
-          style={{ marginTop: theme.spacing.md }}
-        />
-
-        <DividerLine />
-
-        <MetricRow>
-          <MetricCol>
-            <Text variant="labelCaps" color="muted">
-              1등 총 당첨금
-            </Text>
-            <Text variant="headlineMd">
-              {firstPrizeTotal != null ? formatWon(firstPrizeTotal) : '—'}
-            </Text>
-          </MetricCol>
-          <Button
-            label="상세보기"
-            size="sm"
-            onPress={() =>
-              navigation.navigate('RoundDetail', { round: latest.drawNo })
-            }
-          />
-        </MetricRow>
-      </Card>
-
-      {/* 최근 당첨 내역 */}
-      <SectionHeader>
-        <Text variant="headlineMd">최근 당첨 내역</Text>
-        <SeeAll onPress={() => navigation.navigate('RoundList')}>
-          <Text variant="bodySm" color="accent">
-            전체보기
-          </Text>
-          <ChevronRight size={16} color={theme.colors.primary.action} />
-        </SeeAll>
-      </SectionHeader>
-
-      <ListContainer>
-        {recent.map(round => (
-          <Card key={round.drawNo} variant="filled">
+      {!latest ? (
+        <StateArea>
+          {isError ? (
+            <ErrorView
+              title="데이터를 불러오지 못했어요"
+              description="네트워크를 확인하고 다시 시도해 주세요."
+              action={{ label: '다시 시도', onPress: () => refetch() }}
+            />
+          ) : (
+            <LoadingView message="로또 데이터를 불러오는 중..." />
+          )}
+        </StateArea>
+      ) : (
+        <ScrollView
+          contentContainerStyle={{
+            paddingHorizontal: theme.spacing.containerMargin,
+            paddingBottom: theme.spacing.xl,
+          }}
+        >
+          {/* Hero — 최신 회차 */}
+          <Card>
             <HeaderRow>
-              <Text variant="headlineSm">{round.drawNo}회</Text>
+              <Text variant="headlineMd">{latest.drawNo}회 당첨결과</Text>
               <Text variant="bodySm" color="muted">
-                {formatDate(round.date)}
+                {formatDate(latest.date)}
               </Text>
             </HeaderRow>
+
             <LottoBallSet
-              numbers={round.numbers}
-              bonusNo={round.bonusNo}
+              numbers={latest.numbers}
+              bonusNo={latest.bonusNo}
               style={{ marginTop: theme.spacing.md }}
             />
+
+            <DividerLine />
+
+            <MetricRow>
+              <MetricCol>
+                <Text variant="labelCaps" color="muted">
+                  1등 총 당첨금
+                </Text>
+                <Text variant="headlineMd">
+                  {firstPrizeTotal != null ? formatWon(firstPrizeTotal) : '—'}
+                </Text>
+              </MetricCol>
+              <Button
+                label="상세보기"
+                size="sm"
+                onPress={() =>
+                  navigation.navigate('RoundDetail', { round: latest.drawNo })
+                }
+              />
+            </MetricRow>
           </Card>
-        ))}
-      </ListContainer>
+
+          {/* 최근 당첨 내역 */}
+          <SectionHeader>
+            <Text variant="headlineMd">최근 당첨 내역</Text>
+            <SeeAll onPress={() => navigation.navigate('RoundList')}>
+              <Text variant="bodySm" color="accent">
+                전체보기
+              </Text>
+              <ChevronRight size={16} color={theme.colors.primary.action} />
+            </SeeAll>
+          </SectionHeader>
+
+          <ListContainer>
+            {recent.map(round => (
+              <Card key={round.drawNo} variant="filled">
+                <HeaderRow>
+                  <Text variant="headlineSm">{round.drawNo}회</Text>
+                  <Text variant="bodySm" color="muted">
+                    {formatDate(round.date)}
+                  </Text>
+                </HeaderRow>
+                <LottoBallSet
+                  numbers={round.numbers}
+                  bonusNo={round.bonusNo}
+                  style={{ marginTop: theme.spacing.md }}
+                />
+              </Card>
+            ))}
+          </ListContainer>
+
+          {/* 번호 분석 안내 → StatsDetail(출현 빈도) */}
+          <AnalysisCardPress
+            onPress={() =>
+              navigation.navigate('StatsDetail', { type: 'frequency' })
+            }
+          >
+            <Card>
+              <AnalysisColumn>
+                <Text variant="labelCaps" color="accent">
+                  번호 분석 엔진
+                </Text>
+                <Text variant="headlineMd">가장 많이 나온 숫자 TOP 5</Text>
+                <Text variant="bodySm" color="secondary">
+                  최근 100회차 동안 출현 빈도가 가장 높은 행운의 숫자를
+                  확인하세요.
+                </Text>
+              </AnalysisColumn>
+            </Card>
+          </AnalysisCardPress>
+        </ScrollView>
+      )}
     </Screen>
   );
 }
