@@ -5,3 +5,4 @@ export * from './input';
 export * from './display';
 export * from './list';
 export * from './feedback';
+export * from './lotto';
