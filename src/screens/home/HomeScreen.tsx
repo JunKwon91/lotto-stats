@@ -1,19 +1,21 @@
 // ============================================================================
-// HomeScreen — 홈 (최신 회차 Hero + 데이터 연결)
+// HomeScreen — 홈 (최신 회차 Hero + 최근 당첨 내역)
 // ============================================================================
 //
-// useLottoData(캐시 우선)로 최신 회차를 받아 Hero Card에 표시한다.
-//   - 회차/날짜, 당첨번호 6 + 보너스(LottoBall), 1등 총 당첨금, 상세보기
-//   - 1등 총 당첨금 = prizes[0].winners × prizes[0].prizePerWinner
-// 최근 당첨 내역·분석 카드는 다음 단계에서 붙인다.
+// useLottoData(캐시 우선)로 회차 데이터를 받아:
+//   - Hero Card: 최신 회차 당첨결과 + 1등 총 당첨금 + 상세보기
+//   - 최근 당첨 내역: 최신 제외 직전 3회차 (회차/날짜 + 당첨번호)
+//   1등 총 당첨금 = prizes[0].winners × prizes[0].prizePerWinner
+// 번호 분석 카드는 다음 단계에서 붙인다.
 // ============================================================================
 
 import { useNavigation } from '@react-navigation/native';
-import styled from 'styled-components/native';
+import { ChevronRight } from 'lucide-react-native';
+import styled, { useTheme } from 'styled-components/native';
 
 import { Button } from '@/components/action';
 import { ErrorView, LoadingView } from '@/components/feedback';
-import { LottoBall } from '@/components/lotto';
+import { LottoBallSet } from '@/components/lotto';
 import { Text } from '@/components/primitives';
 import { Card, Screen } from '@/components/surface';
 import { useLottoData } from '@/hooks/queries/useLottoData';
@@ -35,13 +37,6 @@ const HeaderRow = styled.View`
   justify-content: space-between;
 `;
 
-const BallRow = styled.View`
-  flex-direction: row;
-  align-items: center;
-  gap: 6px;
-  margin-top: ${({ theme }) => theme.spacing.md}px;
-`;
-
 const DividerLine = styled.View`
   height: 1px;
   background-color: ${({ theme }) => theme.colors.border.divider};
@@ -59,14 +54,33 @@ const MetricCol = styled.View`
   gap: 4px;
 `;
 
+const SectionHeader = styled.View`
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: ${({ theme }) => theme.spacing.xl}px;
+  margin-bottom: ${({ theme }) => theme.spacing.sm}px;
+`;
+
+const SeeAll = styled.Pressable`
+  flex-direction: row;
+  align-items: center;
+  gap: 2px;
+`;
+
+const ListContainer = styled.View`
+  gap: ${({ theme }) => theme.spacing.sm}px;
+`;
+
 export default function HomeScreen() {
   const navigation = useNavigation();
+  const theme = useTheme();
   const { data, isError, refetch } = useLottoData();
 
-  // 최신 회차 — latestRound 항목 우선, 없으면 정렬된 마지막 항목.
-  const rounds = data?.data ?? [];
+  // drawNo 내림차순 정렬 (data 정렬 보장 없이 안전).
+  const sorted = [...(data?.data ?? [])].sort((a, b) => b.drawNo - a.drawNo);
   const latest: LottoRound | undefined =
-    rounds.find(r => r.drawNo === data?.latestRound) ?? rounds[rounds.length - 1];
+    sorted.find(r => r.drawNo === data?.latestRound) ?? sorted[0];
 
   // 캐시·fetch 모두 데이터 없음 → 로딩/에러 처리.
   if (!latest) {
@@ -85,6 +99,9 @@ export default function HomeScreen() {
     );
   }
 
+  // 최신 제외 직전 3회차.
+  const recent = sorted.filter(r => r.drawNo !== latest.drawNo).slice(0, 3);
+
   const firstPrize = latest.prizes?.[0];
   const firstPrizeTotal = firstPrize
     ? firstPrize.winners * firstPrize.prizePerWinner
@@ -92,6 +109,7 @@ export default function HomeScreen() {
 
   return (
     <Screen scroll>
+      {/* Hero — 최신 회차 */}
       <Card>
         <HeaderRow>
           <Text variant="headlineMd">{latest.drawNo}회 당첨결과</Text>
@@ -100,15 +118,11 @@ export default function HomeScreen() {
           </Text>
         </HeaderRow>
 
-        <BallRow>
-          {latest.numbers.map(n => (
-            <LottoBall key={n} number={n} />
-          ))}
-          <Text variant="bodyBase" color="muted">
-            +
-          </Text>
-          <LottoBall number={latest.bonusNo} />
-        </BallRow>
+        <LottoBallSet
+          numbers={latest.numbers}
+          bonusNo={latest.bonusNo}
+          style={{ marginTop: theme.spacing.md }}
+        />
 
         <DividerLine />
 
@@ -130,6 +144,35 @@ export default function HomeScreen() {
           />
         </MetricRow>
       </Card>
+
+      {/* 최근 당첨 내역 */}
+      <SectionHeader>
+        <Text variant="headlineMd">최근 당첨 내역</Text>
+        <SeeAll onPress={() => navigation.navigate('RoundList')}>
+          <Text variant="bodySm" color="accent">
+            전체보기
+          </Text>
+          <ChevronRight size={16} color={theme.colors.primary.action} />
+        </SeeAll>
+      </SectionHeader>
+
+      <ListContainer>
+        {recent.map(round => (
+          <Card key={round.drawNo} variant="filled">
+            <HeaderRow>
+              <Text variant="headlineSm">{round.drawNo}회</Text>
+              <Text variant="bodySm" color="muted">
+                {formatDate(round.date)}
+              </Text>
+            </HeaderRow>
+            <LottoBallSet
+              numbers={round.numbers}
+              bonusNo={round.bonusNo}
+              style={{ marginTop: theme.spacing.md }}
+            />
+          </Card>
+        ))}
+      </ListContainer>
     </Screen>
   );
 }
