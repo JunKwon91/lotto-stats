@@ -90,6 +90,7 @@ UI 컴포넌트·테마 토큰·imperative 호스트 등 디자인 시스템 레
 - **포기한 옵션**: 매 진입 강제 fetch(오프라인 불가·깜빡임), AsyncStorage(성능), 캐시 없이 메모리만(앱 재시작 시 손실).
 - **근거**: 과거 회차 불변성 덕에 캐시 우선이 안전. MMKV는 동기 read라 Splash에서 즉시 분기 가능. 실패 시 캐시 폴백으로 UI 연속성 유지.
 - **결과**: `services/lottoHistoryLoader.ts`(오케스트레이션) + `storage/lottoStorage.ts`(MMKV) + `hooks/queries/useLottoData.ts`(Query) 3층 구조. `CachedLottoData`에 `cachedAt` 추가로 stale 판단.
+- **갱신**: → ADR-12로 데이터 로딩 관문 역할이 `useLottoData` cache-first로 이관되고 `loadInitialLottoData`가 제거됨. Splash 화면은 데이터 로딩과 분리해 애니메이션 용도로 향후 도입 예정.
 
 ---
 
@@ -125,3 +126,24 @@ UI 컴포넌트·테마 토큰·imperative 호스트 등 디자인 시스템 레
 - **포기한 옵션**: 전부 한 스타일로 통일(전부 Outlined면 리스트가 시끄럽고, 전부 Filled면 패널 경계 상실), DS Card 인스턴스로 전면 교체(Figma 콘텐츠 중첩 제약으로 불가).
 - **근거**: 테두리 유무에 "독립 패널 vs 반복 리스트"라는 의미를 부여하면 신규 화면에서도 고민 없이 자동 결정된다. 반복 리스트는 간격+반복이 이미 그룹을 형성하므로 테두리가 불필요하고, 패널은 테두리로 경계를 잡아준다.
 - **결과**: 전 화면(9개) 카드 시각 일관화. 규칙은 Figma Foundations "Card 사용 규칙" 패턴 섹션과 `docs/DESIGN.md`의 Cards 섹션에도 기재. variant 자체의 정의·근거는 라이브러리 ADR-41.
+
+---
+
+## ADR-11: 디자인 SVG를 컴포넌트로 소비 — react-native-svg-transformer
+
+- **상황**: Figma에서 export한 앱 아이콘 로고를 인앱 헤더에 표시해야 함. 손코딩(SVG 지오메트리를 `react-native-svg` 프리미티브로 전사)은 도형이 여러 개인 그래픽에서 지루하고 좌표 오차가 생기며, 라이브러리의 `createIcon`은 단색 단일-path 아이콘 전용이라 그라디언트·멀티컬러 그래픽에는 부적합.
+- **선택**: **`react-native-svg-transformer`**를 도입해 `.svg` 파일을 컴포넌트처럼 import한다 — metro `babelTransformerPath` 등록(`assetExts`에서 svg 제외, `sourceExts`에 추가) + `declarations.d.ts`의 `*.svg` 모듈 선언 + 에셋을 `src/assets/`에 둠.
+- **포기한 옵션**: 손코딩(정적 디자인 에셋에는 과한 유지비·오차), PNG(벡터 손실·@2x/@3x 관리 부담), `createIcon`(멀티컬러·그라디언트 불가).
+- **근거**: 벡터라 크기와 무관하게 선명하고 해상도 변형 에셋이 불필요하며, 디자이너가 로고를 고치면 `.svg` 파일 교체로 끝난다. 소비 방식을 용도별로 분리한다 — 로고·일러스트는 transformer, 단색 UI 아이콘은 `createIcon`, 코드로 생성해야 하는 파라메트릭 도형만 손코딩.
+- **결과**: `components/layout/AppLogo`가 `assets/app-logo.svg`를 `size`로 감싸는 얇은 래퍼. 이후 Figma에서 나온 로고/일러스트 SVG는 export → `src/assets/` 드롭 → import 한 줄로 소비. 런처(홈 화면) 아이콘 PNG는 네이티브 요구라 별개의 작업으로 남는다.
+
+---
+
+## ADR-12: 데이터 로딩을 useLottoData cache-first로 통합 (ADR-07 갱신)
+
+- **상황**: ADR-07은 Splash를 데이터 로딩 관문으로 설계했다 — `loadInitialLottoData()`로 캐시 확인·없으면 강제 fetch → MMKV 저장 → 메인 진입. 그러나 캐싱이 `useLottoData` 경로로 이미 작동해 그 관문이 불필요했고, `loadInitialLottoData`는 호출처 0의 죽은 코드로 잔존하다 제거됐다(커밋 `d298396`).
+- **선택**: 데이터 로딩을 `useLottoData`의 **per-screen cache-first + background sync**로 통합한다. `initialData=getCachedLottoData()`가 재실행 시 MMKV 캐시를 즉시 표시하고, `syncLottoData`가 성공 fetch마다 `setCachedLottoData`로 MMKV를 갱신하며 catch에서 `return cached`로 오프라인·fetch 실패 fallback을 담당한다. `loadInitialLottoData`·`LoadResult`는 제거.
+- **Splash 화면은 향후 도입 예정**: Splash는 애니메이션·브랜딩 용도의 시각적 인트로로 만들 계획이며, "데이터 로딩 관문"으로는 쓰지 않는다. 즉 이 결정은 "Splash를 만들지 않는다"가 아니라 **데이터 로딩과 Splash 화면을 분리**한다는 것이다. Splash 도입 시 데이터 로딩 없이 애니메이션을 담당하며(가벼운 프리페치 정도의 역할은 그때 별도 결정), cache-first 경로는 그대로 유지된다.
+- **포기한 옵션**: Splash를 데이터 로딩 관문으로 쓰는 방식(전역 강제 fetch 후 진입) — cache-first가 화면별 로딩·오프라인을 자연스럽게 처리해 더 유연. 죽은 코드 방치(ADR-07 서술과 불일치, ADR-09의 코드-문서 정합 원칙 위반).
+- **근거**: 재실측 결과 캐시 우선·오프라인·재실행 즉시 표시가 `useLottoData`만으로 이미 작동하며, `loadInitialLottoData`는 그 동작의 중복이었다.
+- **결과**: `services/lottoHistoryLoader.ts`는 `syncLottoData` 단일 export로 축소. 잔여 과제 — `clearCachedLottoData`(리셋 유틸) 정리 여부는 별도 판단, TanStack Query MMKV persister 승격은 미결, 오프라인·에러 경로의 런타임 검증은 미완(현재 온라인만 실측).
