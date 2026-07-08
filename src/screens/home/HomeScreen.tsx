@@ -11,7 +11,7 @@
 
 import { useNavigation } from '@react-navigation/native';
 import { ChevronRight } from 'lucide-react-native';
-import { ScrollView } from 'react-native';
+import { Pressable, ScrollView } from 'react-native';
 import styled, { useTheme } from 'styled-components/native';
 
 import { Button } from '@/components/action';
@@ -179,19 +179,28 @@ export default function HomeScreen() {
 
           <ListContainer>
             {recent.map(round => (
-              <Card key={round.drawNo} variant="filled">
-                <HeaderRow>
-                  <Text variant="headlineSm">{round.drawNo}회</Text>
-                  <Text variant="bodySm" color="muted">
-                    {formatDate(round.date)}
-                  </Text>
-                </HeaderRow>
-                <LottoBallSet
-                  numbers={round.numbers}
-                  bonusNo={round.bonusNo}
-                  style={{ marginTop: theme.spacing.md }}
-                />
-              </Card>
+              <Pressable
+                key={round.drawNo}
+                onPress={() =>
+                  navigation.navigate('RoundDetail', { round: round.drawNo })
+                }
+                accessibilityRole="button"
+                accessibilityLabel={`${round.drawNo}회 상세`}
+              >
+                <Card variant="filled">
+                  <HeaderRow>
+                    <Text variant="headlineSm">{round.drawNo}회</Text>
+                    <Text variant="bodySm" color="muted">
+                      {formatDate(round.date)}
+                    </Text>
+                  </HeaderRow>
+                  <LottoBallSet
+                    numbers={round.numbers}
+                    bonusNo={round.bonusNo}
+                    style={{ marginTop: theme.spacing.md }}
+                  />
+                </Card>
+              </Pressable>
             ))}
           </ListContainer>
 
