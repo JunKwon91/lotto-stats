@@ -22,11 +22,7 @@ import { Text } from '@/components/primitives';
 import { Card, Screen } from '@/components/surface';
 import { useLottoData } from '@/hooks/queries/useLottoData';
 import type { LottoRound } from '@/types/lotto';
-
-// 원화 천단위 콤마 (Hermes Intl 의존 없이 안전).
-function formatWon(amount: number): string {
-  return '₩' + amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-}
+import { formatWon } from '@/utils/formatCurrency';
 
 // "2026-07-04" → "2026.07.04"
 function formatDate(iso: string): string {
