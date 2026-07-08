@@ -26,6 +26,13 @@ export function formatWon(amount: number): string {
 }
 
 /**
+ * 천단위 콤마만 (인원 등 개수 표시용). 예: 2904203 → "2,904,203".
+ */
+export function formatCount(n: number): string {
+  return withComma(n);
+}
+
+/**
  * 큰 금액을 억/조 단위로 축약한 접두 ₩. 억 미만은 버린다.
  * 1억 미만이면 축약 없이 formatWon과 동일한 풀 표기로 폴백한다.
  *
