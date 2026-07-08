@@ -52,10 +52,11 @@ export default function RootNavigator() {
       />
 
       {/* 서브 화면 5개 */}
+      {/* RoundDetail은 커스텀 SubHeader를 쓰므로 네이티브 헤더를 끈다 */}
       <Stack.Screen
         name="RoundDetail"
         component={RoundDetailScreen}
-        options={{ title: '회차 상세' }}
+        options={{ headerShown: false }}
       />
       <Stack.Screen
         name="RoundList"
