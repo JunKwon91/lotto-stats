@@ -11,13 +11,13 @@
 
 import { useNavigation } from '@react-navigation/native';
 import { ChevronRight } from 'lucide-react-native';
-import { Pressable, ScrollView } from 'react-native';
+import { ScrollView } from 'react-native';
 import styled, { useTheme } from 'styled-components/native';
 
 import { Button } from '@/components/action';
 import { ErrorView, LoadingView } from '@/components/feedback';
 import { AppHeader } from '@/components/layout';
-import { LottoBallSet } from '@/components/lotto';
+import { LottoBallSet, RoundCard } from '@/components/lotto';
 import { Text } from '@/components/primitives';
 import { Card, Screen } from '@/components/surface';
 import { useLottoData } from '@/hooks/queries/useLottoData';
@@ -70,7 +70,7 @@ const ListContainer = styled.View`
   gap: ${({ theme }) => theme.spacing.md}px;
 `;
 
-// 번호 분석 안내 카드 — 카드 전체가 탭 영역(Card는 onPress 미지원 → Pressable 래핑).
+// 번호 분석 안내 카드 — 카드 전체가 탭 영역(Card는 onPress 미지원 → Pressable 래핑)
 const AnalysisCardPress = styled.Pressable`
   margin-top: ${({ theme }) => theme.spacing.xl}px;
 `;
@@ -79,7 +79,7 @@ const AnalysisColumn = styled.View`
   gap: ${({ theme }) => theme.spacing.sm}px;
 `;
 
-// 로딩/에러 상태 영역 (헤더 아래).
+// 로딩/에러 상태 영역 (헤더 아래)
 const StateArea = styled.View`
   flex: 1;
   padding-left: ${({ theme }) => theme.spacing.containerMargin}px;
@@ -92,12 +92,12 @@ export default function HomeScreen() {
   const theme = useTheme();
   const { data, isError, refetch } = useLottoData();
 
-  // drawNo 내림차순 정렬 (data 정렬 보장 없이 안전).
+  // drawNo 내림차순 정렬 (data 정렬 보장 없이 안전)
   const sorted = [...(data?.data ?? [])].sort((a, b) => b.drawNo - a.drawNo);
   const latest: LottoRound | undefined =
     sorted.find(r => r.drawNo === data?.latestRound) ?? sorted[0];
 
-  // 최신 제외 직전 3회차.
+  // 최신 제외 직전 3회차
   const recent = latest
     ? sorted.filter(r => r.drawNo !== latest.drawNo).slice(0, 3)
     : [];
@@ -179,28 +179,13 @@ export default function HomeScreen() {
 
           <ListContainer>
             {recent.map(round => (
-              <Pressable
+              <RoundCard
                 key={round.drawNo}
+                round={round}
                 onPress={() =>
                   navigation.navigate('RoundDetail', { round: round.drawNo })
                 }
-                accessibilityRole="button"
-                accessibilityLabel={`${round.drawNo}회 상세`}
-              >
-                <Card variant="filled">
-                  <HeaderRow>
-                    <Text variant="headlineSm">{round.drawNo}회</Text>
-                    <Text variant="bodySm" color="muted">
-                      {formatDate(round.date)}
-                    </Text>
-                  </HeaderRow>
-                  <LottoBallSet
-                    numbers={round.numbers}
-                    bonusNo={round.bonusNo}
-                    style={{ marginTop: theme.spacing.md }}
-                  />
-                </Card>
-              </Pressable>
+              />
             ))}
           </ListContainer>
 
