@@ -28,8 +28,12 @@ import { Text } from '@/components/primitives';
 import { Card, Screen } from '@/components/surface';
 import { useLottoData } from '@/hooks/queries/useLottoData';
 import {
+  getCoOccurrenceMatrix,
+  getConsecutiveDistribution,
+  getLastDigitDistribution,
   getNumberGaps,
   getOddEvenDistribution,
+  getRangeDistribution,
   getSumDistribution,
   getTopNumbers,
 } from '@/utils/statistics';
@@ -112,6 +116,81 @@ const GapLabel = styled.View`
   flex: 1;
 `;
 
+// 가로 % 바 (구간·연속 공용)
+const BarRow = styled.View`
+  flex-direction: row;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing.sm}px;
+  margin-top: ${({ theme }) => theme.spacing.md}px;
+`;
+
+const BarLabel = styled.View`
+  width: 64px;
+`;
+
+const BarTrack = styled.View`
+  flex: 1;
+  height: 6px;
+  border-radius: 3px;
+  background-color: ${({ theme }) => theme.colors.surface.containerHighest};
+  overflow: hidden;
+`;
+
+const BarFill = styled.View`
+  height: 6px;
+  border-radius: 3px;
+`;
+
+const BarPct = styled.View`
+  width: 40px;
+  align-items: flex-end;
+`;
+
+// 연속 발생률 리드 수치 (Figma엔 자리가 없어 부제 아래에 둔다)
+const LeadStat = styled.View`
+  flex-direction: row;
+  align-items: baseline;
+  gap: ${({ theme }) => theme.spacing.sm}px;
+`;
+
+// 동반 출현 히트맵 — 축 라벨 + 9×9 셀 격자 (순수 View)
+const Matrix = styled.View`
+  margin-top: ${({ theme }) => theme.spacing.md}px;
+  gap: ${({ theme }) => theme.spacing.xs}px;
+`;
+
+const MatrixLine = styled.View`
+  flex-direction: row;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing.xs}px;
+`;
+
+// 좌상단 코너 + 좌측 행 라벨 (고정 폭 — 열 정렬 기준)
+const AxisCell = styled.View`
+  width: 24px;
+  align-items: center;
+`;
+
+const CellsLine = styled.View`
+  flex: 1;
+  flex-direction: row;
+  gap: ${({ theme }) => theme.spacing.xs}px;
+`;
+
+const ColLabelCell = styled.View`
+  flex: 1;
+  align-items: center;
+`;
+
+const Cell = styled.View<{ $track: boolean; $intensity: number }>`
+  flex: 1;
+  height: 24px;
+  border-radius: ${({ theme }) => theme.radius.sm}px;
+  background-color: ${({ theme, $track }) =>
+    $track ? theme.colors.surface.containerHighest : theme.colors.primary.action};
+  opacity: ${({ $track, $intensity }) => ($track ? 1 : $intensity)};
+`;
+
 export default function StatsDetailScreen() {
   const theme = useTheme();
   const { data, isError, refetch } = useLottoData();
@@ -130,6 +209,34 @@ export default function StatsDetailScreen() {
     const cold = [...getNumberGaps(scoped)]
       .sort((a, b) => b.gap - a.gap)
       .slice(0, 5);
+    const ranges = getRangeDistribution(scoped);
+    const consecutive = getConsecutiveDistribution(scoped);
+    // 6연속은 실데이터상 없음 — Figma대로 2~5만 두되, 발생하면 그 행만 추가로 노출
+    const runBuckets = consecutive.buckets.filter(
+      b => b.length <= 5 || b.count > 0,
+    );
+    const lastDigit = getLastDigitDistribution(scoped);
+    // 최빈 끝수 — 동점이면 낮은 digit 유지(reduce가 첫 최댓값을 지킴)
+    const digitMode = lastDigit.reduce(
+      (best, d) => (d.count > best.count ? d : best),
+      lastDigit[0],
+    );
+
+    const coocc = getCoOccurrenceMatrix(scoped, 9);
+    // 가장 많이 함께 나온 조합 + 0보다 큰 count의 최솟값(강도 min-max 스트레치용)
+    // 상삼각만 훑어 대칭 중복 제거
+    let maxPair = { a: 0, b: 0, count: 0 };
+    let coMin = Infinity;
+    for (let i = 0; i < coocc.numbers.length; i++) {
+      for (let j = i + 1; j < coocc.numbers.length; j++) {
+        const c = coocc.counts[i][j];
+        if (c > maxPair.count) {
+          maxPair = { a: coocc.numbers[i], b: coocc.numbers[j], count: c };
+        }
+        if (c > 0 && c < coMin) coMin = c;
+      }
+    }
+    if (!Number.isFinite(coMin)) coMin = 0;
 
     // 홀수 비율 = Σ(홀수개수 × 회차수) / (6 × 전체 회차)
     const oddNumbers = oddEven.reduce((acc, b) => acc + b.oddCount * b.count, 0);
@@ -143,7 +250,23 @@ export default function StatsDetailScreen() {
       MAX_TREND_DOTS,
     );
 
-    return { total, freq, sum, cold, oddRatio, mode, trendSums };
+    return {
+      total,
+      freq,
+      sum,
+      cold,
+      oddRatio,
+      mode,
+      trendSums,
+      ranges,
+      consecutive,
+      runBuckets,
+      lastDigit,
+      digitMode,
+      coocc,
+      maxPair,
+      coMin,
+    };
   }, [data?.data, range]);
 
   const barData = stats.freq.map((f, i) => ({
@@ -152,11 +275,20 @@ export default function StatsDetailScreen() {
     highlighted: i === 0,
   }));
 
+  const lastDigitBars = stats.lastDigit.map(d => ({
+    label: String(d.digit),
+    value: d.count,
+    highlighted: d.digit === stats.digitMode.digit,
+  }));
+
   const oddPct = Math.round(stats.oddRatio * 100);
   const evenPct = 100 - oddPct;
   const centerLabel = stats.mode
     ? `${stats.mode.oddCount}:${6 - stats.mode.oddCount}`
     : '—';
+
+  const withRunPct = Math.round(stats.consecutive.withRunRatio * 100);
+  const digitModePct = (stats.digitMode.ratio * 100).toFixed(1);
 
   return (
     <Screen edges={['top']} padded={false}>
@@ -203,7 +335,7 @@ export default function StatsDetailScreen() {
                   { value: stats.oddRatio, color: theme.colors.primary.action },
                   {
                     value: 1 - stats.oddRatio,
-                    color: theme.colors.surface.containerHigh,
+                    color: theme.colors.surface.containerHighest,
                   },
                 ]}
                 size={160}
@@ -224,7 +356,7 @@ export default function StatsDetailScreen() {
               <LegendItem>
                 <LegendDot
                   style={{
-                    backgroundColor: theme.colors.surface.containerHigh,
+                    backgroundColor: theme.colors.surface.containerHighest,
                   }}
                 />
                 <Text variant="bodySm" color="muted">
@@ -274,6 +406,155 @@ export default function StatsDetailScreen() {
                 </Text>
               </GapRow>
             ))}
+          </SectionCard>
+
+          {/* 구간별 분포 */}
+          <SectionCard>
+            <Text variant="headlineMd">구간별 분포</Text>
+            <Text variant="bodySm" color="secondary">
+              1~45번을 5개 구간으로 나눠 출현 빈도를 비교합니다.
+            </Text>
+            {stats.ranges.map(b => (
+              <BarRow key={b.label}>
+                <BarLabel>
+                  <Text variant="bodySm" color="muted">
+                    {b.label}
+                  </Text>
+                </BarLabel>
+                <BarTrack>
+                  <BarFill
+                    style={{
+                      width: `${b.ratio * 100}%`,
+                      backgroundColor: theme.colors.ball[b.ball],
+                    }}
+                  />
+                </BarTrack>
+                <BarPct>
+                  <Text variant="bodySm">{Math.round(b.ratio * 100)}%</Text>
+                </BarPct>
+              </BarRow>
+            ))}
+          </SectionCard>
+
+          {/* 연속 번호 출현 */}
+          <SectionCard>
+            <Text variant="headlineMd">연속 번호 출현</Text>
+            <Text variant="bodySm" color="secondary">
+              두 개 이상의 연속된 번호가 동시에 나온 비율입니다.
+            </Text>
+            <LeadStat>
+              <Text variant="headlineMd" color="accent">
+                {withRunPct}%
+              </Text>
+              <Text variant="bodySm" color="muted">
+                전체 회차 중 연속 번호 포함
+              </Text>
+            </LeadStat>
+            {stats.runBuckets.map(b => (
+              <BarRow key={b.length}>
+                <BarLabel>
+                  <Text variant="bodySm" color="muted">
+                    {b.length}연속
+                  </Text>
+                </BarLabel>
+                <BarTrack>
+                  <BarFill
+                    style={{
+                      width: `${b.ratio * 100}%`,
+                      backgroundColor: theme.colors.state.cold,
+                    }}
+                  />
+                </BarTrack>
+                <BarPct>
+                  <Text variant="bodySm">{Math.round(b.ratio * 100)}%</Text>
+                </BarPct>
+              </BarRow>
+            ))}
+          </SectionCard>
+
+          {/* 끝수 분포 */}
+          <SectionCard>
+            <Text variant="headlineMd">끝수 분포</Text>
+            <Text variant="bodySm" color="secondary">
+              각 번호의 일의 자리(0~9)별 출현 분포입니다.
+            </Text>
+            <LeadStat>
+              <Text variant="headlineMd" color="accent">
+                끝수 {stats.digitMode.digit}
+              </Text>
+              <Text variant="bodySm" color="muted">
+                최빈 · {digitModePct}%
+              </Text>
+            </LeadStat>
+            <BarChart data={lastDigitBars} />
+          </SectionCard>
+
+          {/* 동반 출현 매트릭스 */}
+          <SectionCard>
+            <Text variant="headlineMd">동반 출현 매트릭스</Text>
+            <Text variant="bodySm" color="secondary">
+              두 번호가 함께 출현한 횟수의 강도를 색으로 표현합니다.
+            </Text>
+            <LeadStat>
+              <Text variant="headlineMd" color="accent">
+                {stats.maxPair.a}·{stats.maxPair.b}
+              </Text>
+              <Text variant="bodySm" color="muted">
+                가장 많이 함께 · {stats.maxPair.count}회
+              </Text>
+            </LeadStat>
+            <Matrix>
+              {/* 상단 헤더행 — 빈 코너 + 열 번호 */}
+              <MatrixLine>
+                <AxisCell />
+                <CellsLine>
+                  {stats.coocc.numbers.map(n => (
+                    <ColLabelCell key={n}>
+                      <Text variant="labelSm" color="muted">
+                        {n}
+                      </Text>
+                    </ColLabelCell>
+                  ))}
+                </CellsLine>
+              </MatrixLine>
+              {/* 각 행 — 행 번호 + 9개 셀 */}
+              {stats.coocc.numbers.map((rowNum, i) => (
+                <MatrixLine key={rowNum}>
+                  <AxisCell>
+                    <Text variant="labelSm" color="muted">
+                      {rowNum}
+                    </Text>
+                  </AxisCell>
+                  <CellsLine>
+                    {stats.coocc.numbers.map((colNum, j) => {
+                      const count = stats.coocc.counts[i][j];
+                      // 대각선(자기 자신)과 0회는 중립 트랙
+                      const isTrack = i === j || count === 0;
+                      // 강도 = min-max 스트레치. 상위 번호끼리는 다 자주 동반해
+                      // count/max면 압축되므로, 값 범위를 [0.2, 1]로 펼쳐 차이를 드러낸다
+                      const span = stats.coocc.max - stats.coMin;
+                      const intensity =
+                        span > 0
+                          ? 0.2 + (0.8 * (count - stats.coMin)) / span
+                          : 1;
+                      return (
+                        <Cell
+                          key={colNum}
+                          $track={isTrack}
+                          $intensity={intensity}
+                          accessible={!isTrack}
+                          accessibilityLabel={
+                            isTrack
+                              ? undefined
+                              : `${rowNum}번과 ${colNum}번 ${count}회`
+                          }
+                        />
+                      );
+                    })}
+                  </CellsLine>
+                </MatrixLine>
+              ))}
+            </Matrix>
           </SectionCard>
         </ScrollView>
       )}
