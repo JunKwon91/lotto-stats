@@ -15,6 +15,7 @@ UI 컴포넌트·테마 토큰·imperative 호스트 등 디자인 시스템 레
   - Google Play가 2025-11-01부터 Android 15의 16KB 페이지 크기 지원을 의무화 → RN 0.76은 미지원이라 출시 불가, 0.78+ 필요.
   - `react-native-reanimated@4`의 peer 범위가 `"0.81 - 0.85"` → 0.78도 미충족.
   - `victory-native@41` + `@shopify/react-native-skia@2`가 React 19 요구 → RN 0.81이 React 19를 처음 동반.
+  - → ADR-18로 갱신됨: `victory-native`·Skia는 이후 제거하고 차트를 `react-native-svg` + View로 통일. RN 0.81 선정 판단 자체는 이력으로 보존(React 19는 다른 의존성 요구로도 필요).
   - `react-native-mmkv@4`(NitroModules)·`react-native-screens@4`·`@react-navigation@7`도 0.78+ 요구.
 - **결과**: 버전은 "최신"이 아니라 **사용할 라이브러리의 peer dep와 출시 정책에서 역산**해 결정됨. 0.81은 위 4개 제약을 동시에 만족하는 첫 버전.
 
@@ -197,3 +198,18 @@ UI 컴포넌트·테마 토큰·imperative 호스트 등 디자인 시스템 레
 - **포기한 옵션**: (a) 화면마다 배경을 개별 지정(`Screen`은 `bg.*` 계열만 받아 `surface.base` 선택 불가·반복), (b) 디자인을 canvas 회색으로 정정(의도는 흰 페이지), (c) 라이브러리 canvas 값 변경(앱에서 라이브러리 수정은 부적절).
 - **근거**: 디자인 의도가 흰 페이지이므로 canvas를 `surface.base`에 맞추는 게 정합이다. Dark는 이미 동일해 리스크가 없다. 라이브러리의 M3 canvas(Light 회색) 레이어링보다 실제 디자인을 우선한다.
 - **결과**: 전 화면 Light 배경이 흰색으로 통일된다. 카드(`surface.container`)는 원래 같은 토큰이라 변화가 없다. Light의 canvas 회색 레이어는 더 이상 쓰지 않는다.
+
+---
+
+## ADR-18: 차트를 react-native-svg + View로 통일 (Victory·Skia 제거)
+
+- **상황**: 스택에 `victory-native@41` + `@shopify/react-native-skia@2`가 있었으나 `src`에서 import 0건이었다. 통계 화면 차트 구현을 앞두고 사용 여부를 재검토했다. Victory Native 41은 이전 버전과 다른 Skia 기반 재작성이라 Skia가 peer 필수다.
+- **선택**: Victory Native·Skia를 제거하고, 차트를 **`react-native-svg`**(도넛·추이선)와 **순수 View**(막대·프로그레스·히트맵 격자)로 통일한다.
+- **포기한 옵션**: Victory 유지(추이 차트 한 곳만 실익), 전면 Victory 전환(단순 막대·도넛에 과중).
+- **근거**:
+  - Skia는 `dependency`라 실사용이 없어도 네이티브 바이너리가 앱에 컴파일된다(플랫폼당 수 MB). 즉 비용만 지불하고 안 쓰는 상태였다.
+  - Figma 통계 디자인에 인터랙션 정의가 없다(정적 표시). Victory의 강점인 터치 툴팁·애니메이션·줌·팬이 요구사항에 없다.
+  - Victory가 실익을 주는 건 합계 추이 하나뿐이고, 그마저 svg Polyline + 수동 스케일로 대체 가능하다.
+  - 심화 차트 중 동반 출현 히트맵은 Victory에 해당 컴포넌트가 없어 어차피 View 격자로 그려야 한다 — 커버리지가 좁다.
+  - `react-native-svg`는 이미 앱의 시각화 표준이다(AppLogo·RankBadge 메달·DonutChart). 하나로 통일하면 유지보수 표면이 좁아진다.
+- **결과**: `components/charts/`는 svg + View 기반. `package.json`에서 두 패키지를 제거하고 `pod install`로 Skia 네이티브를 반납했다. 향후 터치·줌 같은 인터랙티브 차트가 실제로 필요해지면 그 시점에 재검토한다.
