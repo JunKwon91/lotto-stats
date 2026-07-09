@@ -5,7 +5,7 @@
 // 서브 화면: 회차 상세 / 회차 목록 / 통계 상세 / 즐겨찾기 추가 / 설정
 //
 // 서브 화면에 진입하면 native stack이 위로 push되며 Bottom Tab은 자동으로 숨음
-// (Tab Navigator가 한 화면(MainTabs)으로 처리되기 때문에 push된 화면 뒤에 가려짐).
+// (Tab Navigator가 한 화면(MainTabs)으로 처리되기 때문에 push된 화면 뒤에 가려짐)
 // ============================================================================
 
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -52,7 +52,6 @@ export default function RootNavigator() {
       />
 
       {/* 서브 화면 5개 */}
-      {/* RoundDetail은 커스텀 SubHeader를 쓰므로 네이티브 헤더를 끈다 */}
       <Stack.Screen
         name="RoundDetail"
         component={RoundDetailScreen}
@@ -61,7 +60,7 @@ export default function RootNavigator() {
       <Stack.Screen
         name="RoundList"
         component={RoundListScreen}
-        options={{ title: '회차 목록' }}
+        options={{ headerShown: false }}
       />
       <Stack.Screen
         name="StatsDetail"
