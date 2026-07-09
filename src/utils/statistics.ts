@@ -186,15 +186,14 @@ export interface SumDistribution {
   buckets: SumBucket[];
 }
 
-// 합계 구간 — Figma는 별도 구간 없이 평균/표준편차로 표현하므로, 평균(약 138)
-// 주변을 30 간격으로 나눈 구간을 제안한다. 이론상 합계 범위는 21~255
-// (최소 1+2+3+4+5+6=21, 최대 40+41+42+43+44+45=255)
+// 합계 구간 — Statistics 합계 분포 섹션 기준(21–80 / 81–140 / 141–200 / 201+)
+// 이론상 합계 범위는 21~255 (최소 1+2+3+4+5+6=21, 최대 40+41+42+43+44+45=255)라
+// 첫 구간 하한을 0으로 둬 모든 합계가 반드시 한 구간에 든다(비율 합 = 100%)
 const SUM_BUCKETS: readonly Pick<SumBucket, 'label' | 'min' | 'max'>[] = [
-  { label: '99 이하', min: 0, max: 99 },
-  { label: '100–129', min: 100, max: 129 },
-  { label: '130–159', min: 130, max: 159 },
-  { label: '160–189', min: 160, max: 189 },
-  { label: '190 이상', min: 190, max: Number.MAX_SAFE_INTEGER },
+  { label: '21–80', min: 0, max: 80 },
+  { label: '81–140', min: 81, max: 140 },
+  { label: '141–200', min: 141, max: 200 },
+  { label: '201+', min: 201, max: Number.MAX_SAFE_INTEGER },
 ];
 
 function sumOf(round: LottoRound): number {

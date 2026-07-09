@@ -7,3 +7,4 @@ export * from './list';
 export * from './feedback';
 export * from './lotto';
 export * from './layout';
+export * from './charts';
