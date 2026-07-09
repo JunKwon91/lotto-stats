@@ -65,7 +65,7 @@ export default function RootNavigator() {
       <Stack.Screen
         name="StatsDetail"
         component={StatsDetailScreen}
-        options={{ title: '통계 상세' }}
+        options={{ headerShown: false }}
       />
       <Stack.Screen
         name="FavoriteAdd"
