@@ -185,7 +185,7 @@ export default function StatisticsScreen() {
           }}
         >
           <TitleBlock>
-            <Text variant="headlineMd">통계 분석</Text>
+            <Text variant="displayLg">통계 분석</Text>
             <Text variant="bodySm" color="muted">
               최근 {RANGE}회차 데이터를 기반으로 정밀 분석한 결과입니다.
             </Text>
@@ -223,7 +223,7 @@ export default function StatisticsScreen() {
 
           {/* 번호별 출현 빈도 */}
           <SectionCard>
-            <Text variant="headlineSm">번호별 출현 빈도</Text>
+            <Text variant="headlineMd">번호별 출현 빈도</Text>
             <View style={{ marginTop: theme.spacing.md }}>
               <BarChart data={barData} />
             </View>
@@ -231,7 +231,7 @@ export default function StatisticsScreen() {
 
           {/* 홀짝 비율 */}
           <SectionCard>
-            <Text variant="headlineSm">홀짝 비율</Text>
+            <Text variant="headlineMd">홀짝 비율</Text>
             <DonutWrap>
               <DonutChart
                 segments={[
@@ -271,7 +271,7 @@ export default function StatisticsScreen() {
 
           {/* 번호 합계 분포 */}
           <SectionCard>
-            <Text variant="headlineSm">번호 합계 분포</Text>
+            <Text variant="headlineMd">번호 합계 분포</Text>
             {stats.sum.buckets.map(b => (
               <SumRow key={b.label}>
                 <SumLabel>
@@ -292,7 +292,7 @@ export default function StatisticsScreen() {
           {/* 분석 더 보기 */}
           <SectionCard>
             <CTAColumn>
-              <Text variant="headlineSm">분석 더 보기</Text>
+              <Text variant="headlineMd">분석 더 보기</Text>
               <Text variant="bodySm" color="muted">
                 더 많은 통계 지표를 확인하세요.
               </Text>
