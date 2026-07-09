@@ -13,6 +13,7 @@
 // 잡는 패턴을 공통으로 쓴다
 // ============================================================================
 
+import type { BallColorKey } from '@/components/lotto';
 import type { LottoRound } from '@/types/lotto';
 
 const LOW = 1;
@@ -230,4 +231,214 @@ export function getSumDistribution(rounds: LottoRound[]): SumDistribution {
   });
 
   return { min, max, average, stdDev, buckets };
+}
+
+// ----------------------------------------------------------------------------
+// 5. 구간별 분포 (번호대 밴드)
+// ----------------------------------------------------------------------------
+
+export interface RangeBucket {
+  label: string;
+  /** 공 색 키 — 바 색·라벨에 매핑 */
+  ball: BallColorKey;
+  /** 밴드 하한 (포함) */
+  min: number;
+  /** 밴드 상한 (포함) */
+  max: number;
+  count: number;
+  /** 전체 출현(회차×6) 대비 비율 (0~1) */
+  ratio: number;
+}
+
+// 밴드 경계 = 공 색 구간과 동일(1~10 노랑 … 41~45 초록). 마지막 밴드만 5개라
+// 출현 비율이 자연히 절반가량으로 낮다(정규화하지 않고 실제 출현 비율을 그대로 둔다)
+const RANGE_BANDS: readonly Pick<RangeBucket, 'label' | 'ball' | 'min' | 'max'>[] = [
+  { label: '1–10', ball: 'yellow', min: 1, max: 10 },
+  { label: '11–20', ball: 'blue', min: 11, max: 20 },
+  { label: '21–30', ball: 'red', min: 21, max: 30 },
+  { label: '31–40', ball: 'gray', min: 31, max: 40 },
+  { label: '41–45', ball: 'green', min: 41, max: 45 },
+];
+
+/**
+ * 5개 번호대 밴드별 출현 횟수·비율. 비율 = 밴드 출현 횟수 / (회차수 × 6)
+ * 밴드 순서(오름차순) 5개 배열. 비율 합 ≈ 1
+ */
+export function getRangeDistribution(rounds: LottoRound[]): RangeBucket[] {
+  const counts = RANGE_BANDS.map(() => 0);
+  for (const round of rounds) {
+    for (const n of round.numbers) {
+      const i = RANGE_BANDS.findIndex(b => n >= b.min && n <= b.max);
+      if (i >= 0) counts[i]++;
+    }
+  }
+
+  const total = rounds.length * 6;
+  return RANGE_BANDS.map((band, i) => ({
+    ...band,
+    count: counts[i],
+    ratio: total > 0 ? counts[i] / total : 0,
+  }));
+}
+
+// ----------------------------------------------------------------------------
+// 6. 연속 번호 출현
+// ----------------------------------------------------------------------------
+
+export interface ConsecutiveBucket {
+  /** 최장 연속 run 길이 (2~6) */
+  length: number;
+  count: number;
+  /** 연속이 있는 회차 대비 비율 (0~1) */
+  ratio: number;
+}
+
+export interface ConsecutiveDistribution {
+  /** 연속(길이≥2)이 하나라도 있는 회차 수 */
+  withRunCount: number;
+  /** 전체 회차 대비 연속 발생률 (0~1) */
+  withRunRatio: number;
+  /** 최장 run 길이별 분포. ratio 분모 = withRunCount */
+  buckets: ConsecutiveBucket[];
+}
+
+// 최장 run 길이 버킷 — 이론상 6까지(6개 모두 연속). 실제로 5·6은 거의 없음
+const RUN_LENGTHS = [2, 3, 4, 5, 6] as const;
+
+// 정렬된 번호에서 가장 긴 연속(n, n+1, …) 구간의 길이. 없으면 1(단독), 빈 배열이면 0
+function longestConsecutiveRun(numbers: number[]): number {
+  const sorted = [...numbers].sort((a, b) => a - b);
+  if (sorted.length === 0) return 0;
+
+  let best = 1;
+  let current = 1;
+  for (let i = 1; i < sorted.length; i++) {
+    if (sorted[i] === sorted[i - 1] + 1) {
+      current++;
+      if (current > best) best = current;
+    } else {
+      current = 1;
+    }
+  }
+  return best;
+}
+
+/**
+ * 회차별 최장 연속 run 길이 분포. 연속이 있는 회차만 분모로 삼는다
+ * (전체 발생률은 withRunRatio로 따로 제공). 빈 입력이면 값 0
+ */
+export function getConsecutiveDistribution(
+  rounds: LottoRound[],
+): ConsecutiveDistribution {
+  // bucketCounts[length] = 최장 run이 정확히 length인 회차 수
+  const bucketCounts = new Map<number, number>(RUN_LENGTHS.map(l => [l, 0]));
+  let withRunCount = 0;
+
+  for (const round of rounds) {
+    const longest = longestConsecutiveRun(round.numbers);
+    if (longest >= 2) {
+      withRunCount++;
+      // 6 초과는 없지만 방어적으로 6으로 묶는다
+      const key = Math.min(longest, 6);
+      bucketCounts.set(key, (bucketCounts.get(key) ?? 0) + 1);
+    }
+  }
+
+  const buckets = RUN_LENGTHS.map(length => {
+    const count = bucketCounts.get(length) ?? 0;
+    return {
+      length,
+      count,
+      ratio: withRunCount > 0 ? count / withRunCount : 0,
+    };
+  });
+
+  return {
+    withRunCount,
+    withRunRatio: rounds.length > 0 ? withRunCount / rounds.length : 0,
+    buckets,
+  };
+}
+
+// ----------------------------------------------------------------------------
+// 7. 끝수(일의 자리) 분포
+// ----------------------------------------------------------------------------
+
+export interface LastDigitCount {
+  /** 끝수 0~9 */
+  digit: number;
+  count: number;
+  /** 전체 출현(회차×6) 대비 비율 (0~1) */
+  ratio: number;
+}
+
+/**
+ * 당첨번호 끝수(번호 % 10) 0~9별 출현 횟수·비율
+ * digit 오름차순 10개 배열. 비율 합 ≈ 1. 최빈은 호출처에서 argmax
+ */
+export function getLastDigitDistribution(
+  rounds: LottoRound[],
+): LastDigitCount[] {
+  // counts[d] = 끝수 d의 출현 횟수 (d = 0~9)
+  const counts = new Array(10).fill(0);
+  for (const round of rounds) {
+    for (const n of round.numbers) counts[n % 10]++;
+  }
+
+  const total = rounds.length * 6;
+  return counts.map((count, digit) => ({
+    digit,
+    count,
+    ratio: total > 0 ? count / total : 0,
+  }));
+}
+
+// ----------------------------------------------------------------------------
+// 8. 동반 출현 (상위 빈출 번호 pairwise)
+// ----------------------------------------------------------------------------
+
+export interface CoOccurrenceMatrix {
+  /** 대상 번호 (상위 topN 빈출, 오름차순) */
+  numbers: number[];
+  /** N×N 대칭 동반 출현 횟수. 대각선은 0 */
+  counts: number[][];
+  /** counts 최댓값 (강도 정규화용) */
+  max: number;
+}
+
+/**
+ * 상위 topN 빈출 번호끼리 같은 회차에 함께 나온 횟수(N×N 대칭 행렬)
+ * counts[i][j] = numbers[i]와 numbers[j]가 함께 나온 회차 수. 대각선 0
+ */
+export function getCoOccurrenceMatrix(
+  rounds: LottoRound[],
+  topN = 9,
+): CoOccurrenceMatrix {
+  // 상위 topN 빈출 번호(동점은 번호 오름차순) → 축 표기를 위해 번호 오름차순으로
+  const numbers = getTopNumbers(rounds, topN)
+    .map(c => c.number)
+    .sort((a, b) => a - b);
+  const index = new Map(numbers.map((n, i) => [n, i]));
+  const size = numbers.length;
+
+  const counts = Array.from({ length: size }, () => new Array(size).fill(0));
+  for (const round of rounds) {
+    // 이번 회차 당첨번호 중 대상(상위 번호)만 추려 쌍마다 카운트
+    const present = round.numbers.filter(n => index.has(n));
+    for (let a = 0; a < present.length; a++) {
+      for (let b = a + 1; b < present.length; b++) {
+        const i = index.get(present[a])!;
+        const j = index.get(present[b])!;
+        counts[i][j]++;
+        counts[j][i]++;
+      }
+    }
+  }
+
+  let max = 0;
+  for (const row of counts) {
+    for (const v of row) if (v > max) max = v;
+  }
+
+  return { numbers, counts, max };
 }

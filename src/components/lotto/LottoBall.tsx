@@ -11,7 +11,8 @@
 import type { StyleProp, ViewStyle } from 'react-native';
 import styled from 'styled-components/native';
 
-type BallColor = 'yellow' | 'blue' | 'red' | 'gray' | 'green';
+export type BallColorKey = 'yellow' | 'blue' | 'red' | 'gray' | 'green';
+type BallColor = BallColorKey;
 
 // 볼 지름(px) — Figma sm 36 / md 40.
 const SIZE_PX = { sm: 36, md: 40 } as const;
