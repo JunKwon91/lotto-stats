@@ -19,7 +19,7 @@
 - Zustand (UI state) / TanStack Query (server state)
 - MMKV 4 + NitroModules (영구 저장소)
 - Styled Components / Reanimated 4 + Worklets / FlashList
-- Victory Native 41 + Skia 2 (차트)
+- react-native-svg (차트·아이콘)
 - React Navigation 7
 - Lucide Icons
 
