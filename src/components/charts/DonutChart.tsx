@@ -25,7 +25,7 @@ export interface DonutChartProps {
   size?: number;
   /** 링 두께(px) @default 20 */
   thickness?: number;
-  /** 배경 링 색 — 생략 시 surface.containerHigh */
+  /** 배경 링 색 — 생략 시 surface.containerHighest */
   trackColor?: string;
   /** 중앙 오버레이 콘텐츠 */
   children?: ReactNode;
@@ -50,7 +50,7 @@ export function DonutChart({
   children,
 }: DonutChartProps) {
   const theme = useTheme();
-  const track = trackColor ?? theme.colors.surface.containerHigh;
+  const track = trackColor ?? theme.colors.surface.containerHighest;
 
   const center = size / 2;
   const radius = (size - thickness) / 2;

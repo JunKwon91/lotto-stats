@@ -103,7 +103,7 @@ const SumTrack = styled.View`
   flex: 1;
   height: 6px;
   border-radius: 3px;
-  background-color: ${({ theme }) => theme.colors.surface.containerHigh};
+  background-color: ${({ theme }) => theme.colors.surface.containerHighest};
   overflow: hidden;
 `;
 
@@ -238,7 +238,7 @@ export default function StatisticsScreen() {
                   { value: stats.oddRatio, color: theme.colors.primary.action },
                   {
                     value: 1 - stats.oddRatio,
-                    color: theme.colors.surface.containerHigh,
+                    color: theme.colors.surface.containerHighest,
                   },
                 ]}
                 size={160}
@@ -259,7 +259,7 @@ export default function StatisticsScreen() {
               <LegendItem>
                 <LegendDot
                   style={{
-                    backgroundColor: theme.colors.surface.containerHigh,
+                    backgroundColor: theme.colors.surface.containerHighest,
                   }}
                 />
                 <Text variant="bodySm" color="muted">

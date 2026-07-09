@@ -23,7 +23,7 @@ export interface BarChartProps {
   data: BarDatum[];
   /** 막대 영역 높이(px) @default 120 */
   height?: number;
-  /** 기본 막대 색 — 생략 시 surface.containerHigh */
+  /** 기본 막대 색 — 생략 시 surface.containerHighest */
   barColor?: string;
   /** 강조 막대 색 — 생략 시 primary.action */
   highlightColor?: string;
@@ -66,7 +66,7 @@ export function BarChart({
   highlightColor,
 }: BarChartProps) {
   const theme = useTheme();
-  const base = barColor ?? theme.colors.surface.containerHigh;
+  const base = barColor ?? theme.colors.surface.containerHighest;
   const hi = highlightColor ?? theme.colors.primary.action;
 
   // 0으로 나누기 방지 — 최댓값이 0이면 모든 막대 높이 0
