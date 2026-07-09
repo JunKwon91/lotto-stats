@@ -3,9 +3,9 @@
 // ============================================================================
 //
 // 각 행: 등수 배지 · 1인당 당첨금액 · 당첨인원. 이월 회차처럼 당첨자가 없는
-// 등수(winners=0)는 금액을 "—", 인원을 "당첨자 없음"으로 표시한다.
+// 등수(winners=0)는 금액을 "—", 인원을 "당첨자 없음"으로 표시한다
 // 컨테이너는 라이브러리 Card가 아니라 Outlined 스펙에 맞춘 프레임으로 둔다
-// (구분선을 카드 가장자리까지 그리고 행이 자체 padding을 갖도록, ADR-10).
+// (구분선을 카드 가장자리까지 그리고 행이 자체 padding을 갖도록, ADR-10)
 // ============================================================================
 
 import type { StyleProp, ViewStyle } from 'react-native';
@@ -58,14 +58,14 @@ const WinnersCol = styled.View`
 `;
 
 export interface PrizeTableProps {
-  /** 회차의 등수별 당첨 결과. */
+  /** 회차의 등수별 당첨 결과 */
   prizes: LottoPrize[];
-  /** 컨테이너 외부 스타일 override (여백 등). */
+  /** 컨테이너 외부 스타일 override (여백 등) */
   style?: StyleProp<ViewStyle>;
 }
 
 /**
- * 등수별 당첨 결과 표.
+ * 등수별 당첨 결과 표
  *
  * @example
  * <PrizeTable prizes={round.prizes} />

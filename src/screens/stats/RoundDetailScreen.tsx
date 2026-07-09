@@ -2,10 +2,9 @@
 // RoundDetailScreen — 회차 상세 (헤더 + Hero + 등수별 표 + 요약 슬롯)
 // ============================================================================
 //
-// { round } 파라미터로 진입해 해당 회차의 당첨 결과를 보여준다.
-// 데이터는 useLottoData의 전체 목록에서 drawNo로 찾는다(별도 fetch 없음).
-// 헤더·Hero(회차·날짜·당첨번호)·등수별 당첨 표·요약 슬롯(총당첨자수·총당첨금액)까지
-// RoundDetail 전 섹션을 담는다.
+// { round } 파라미터로 진입해 해당 회차의 당첨 결과를 보여준다
+// 데이터는 useLottoData의 전체 목록에서 drawNo로 찾는다(별도 fetch 없음)
+// 헤더·Hero(회차·날짜·당첨번호)·등수별 당첨 표·요약 슬롯(총당첨자수·총당첨금액)까지 RoundDetail 전 섹션을 담는다
 // ============================================================================
 
 import { Star, Trophy } from 'lucide-react-native';
@@ -26,7 +25,7 @@ function formatDate(iso: string): string {
   return iso.replace(/-/g, '.');
 }
 
-// 로딩/에러/미발견 상태 영역 (헤더 아래).
+// 로딩/에러/미발견 상태 영역 (헤더 아래)
 const StateArea = styled.View`
   flex: 1;
   padding-left: ${({ theme }) => theme.spacing.containerMargin}px;
@@ -50,7 +49,7 @@ const BonusRow = styled.View`
   gap: ${({ theme }) => theme.spacing.sm}px;
 `;
 
-// 당첨 결과 요약 섹션 헤더 (Trophy + 제목).
+// 당첨 결과 요약 섹션 헤더 (Trophy + 제목)
 const SectionHeader = styled.View`
   flex-direction: row;
   align-items: center;
@@ -58,8 +57,8 @@ const SectionHeader = styled.View`
   margin-top: ${({ theme }) => theme.spacing.xl}px;
 `;
 
-// Outlined 카드 스펙(surface.container + border.subtle 1px, radius 16) 공용 베이스.
-// 요약 하위 카드들은 이 위에 margin-top(md)으로 균등 간격을 둔다.
+// Outlined 카드 스펙(surface.container + border.subtle 1px, radius 16) 공용 베이스
+// 요약 하위 카드들은 이 위에 margin-top(md)으로 균등 간격을 둔다
 const OutlinedCard = styled.View`
   margin-top: ${({ theme }) => theme.spacing.md}px;
   background-color: ${({ theme }) => theme.colors.surface.container};
@@ -69,7 +68,7 @@ const OutlinedCard = styled.View`
   padding: ${({ theme }) => theme.spacing.lg}px;
 `;
 
-// 1등 당첨 유형 카드 (자동/수동/반자동).
+// 1등 당첨 유형 카드 (자동/수동/반자동)
 const MethodCard = styled(OutlinedCard)`
   gap: ${({ theme }) => theme.spacing.md}px;
 `;
@@ -84,21 +83,21 @@ const MethodCol = styled.View`
   gap: ${({ theme }) => theme.spacing.xs}px;
 `;
 
-// 총 판매액 카드 (라벨 좌 / 값 우, 풀폭).
+// 총 판매액 카드 (라벨 좌 / 값 우, 풀폭)
 const SalesCard = styled(OutlinedCard)`
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
 `;
 
-// 요약 2슬롯 (총당첨자수·총당첨금액) — 나란히 균등 폭.
+// 요약 2슬롯 (총당첨자수·총당첨금액) — 나란히 균등 폭
 const SummaryRow = styled.View`
   flex-direction: row;
   gap: ${({ theme }) => theme.spacing.md}px;
   margin-top: ${({ theme }) => theme.spacing.md}px;
 `;
 
-// 개별 슬롯 — Outlined 스펙 + 세로 라벨/값.
+// 개별 슬롯 — Outlined 스펙 + 세로 라벨/값
 const Slot = styled(OutlinedCard)`
   flex: 1;
   margin-top: 0px;
