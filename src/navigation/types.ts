@@ -43,7 +43,7 @@ export type RootStackParamList = {
   RoundDetail: { round: number };
   RoundList: undefined;
   StatsDetail: { type: 'frequency' | 'pattern' | 'gap' };
-  FavoriteAdd: undefined;
+  FavoriteAdd: { id?: string } | undefined;
   Settings: undefined;
 };
 
