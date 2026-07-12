@@ -7,8 +7,8 @@
 // 헤더·Hero(회차·날짜·당첨번호)·등수별 당첨 표·요약 슬롯(총당첨자수·총당첨금액)까지 RoundDetail 전 섹션을 담는다
 // ============================================================================
 
-import { Star, Trophy } from 'lucide-react-native';
-import { Pressable, ScrollView } from 'react-native';
+import { Trophy } from 'lucide-react-native';
+import { ScrollView } from 'react-native';
 import styled, { useTheme } from 'styled-components/native';
 
 import { ErrorView, LoadingView } from '@/components/feedback';
@@ -122,18 +122,7 @@ export default function RoundDetailScreen({ route }: RoundDetailScreenProps) {
 
   return (
     <Screen edges={['top']} padded={false}>
-      <SubHeader
-        title={`${round}회 상세`}
-        right={
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="즐겨찾기"
-            hitSlop={8}
-          >
-            <Star size={24} color={theme.colors.text.secondary} />
-          </Pressable>
-        }
-      />
+      <SubHeader title={`${round}회 상세`} />
 
       {!roundData ? (
         <StateArea>
