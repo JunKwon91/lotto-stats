@@ -16,8 +16,12 @@
 //
 // queryClient 인스턴스는 src/lib/queryClient.ts에서 import.
 // 컴포넌트 외부(api 함수, 백그라운드 로직)에서도 직접 접근 가능.
+//
+// 스플래시는 네이티브 정적 화면(bootsplash) → AnimatedSplash 오버레이로 인계된다.
+// AnimatedSplash가 정적 화면을 감추고 막대 애니메이션 후 splashDone을 올려 제거.
 // ============================================================================
 
+import { useState } from 'react';
 import { StatusBar, useColorScheme } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -25,6 +29,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from 'styled-components/native';
 import RootNavigator from '@/navigation/RootNavigator';
+import { AnimatedSplash } from '@/screens/splash/AnimatedSplash';
 import { queryClient } from '@/lib/queryClient';
 import { useSettingsStore } from '@/stores/settingsStore';
 import { darkTheme, lightTheme } from '@/theme';
@@ -36,6 +41,8 @@ export default function App() {
   const themeMode = useSettingsStore(s => s.themeMode);
   const isDark = themeMode === 'system' ? systemDark : themeMode === 'dark';
   const theme = isDark ? darkTheme : lightTheme;
+
+  const [splashDone, setSplashDone] = useState(false);
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
@@ -49,6 +56,9 @@ export default function App() {
             </NavigationContainer>
             <DialogHost />
             <ToastHost />
+            {!splashDone && (
+              <AnimatedSplash onFinish={() => setSplashDone(true)} />
+            )}
           </SafeAreaProvider>
         </QueryClientProvider>
       </ThemeProvider>

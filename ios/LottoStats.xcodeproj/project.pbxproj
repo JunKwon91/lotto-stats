@@ -11,15 +11,19 @@
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		761780ED2CA45674006654EE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 761780EC2CA45674006654EE /* AppDelegate.swift */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		9426CF30F3664E9FBCBE83AC /* Colors.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 09CB7D5630A44744BE4E67B1 /* Colors.xcassets */; };
+		A72693BC1B9340D49A0AAE88 /* BootSplash.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3F8C0750AEE943BEBAF645F4 /* BootSplash.storyboard */; };
 		F142233382D14D37555AD5F4 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		09CB7D5630A44744BE4E67B1 /* Colors.xcassets */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = folder.assetcatalog; name = Colors.xcassets; path = LottoStats/Colors.xcassets; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* LottoStats.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LottoStats.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = LottoStats/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = LottoStats/Info.plist; sourceTree = "<group>"; };
 		13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = LottoStats/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		3B4392A12AC88292D35C810B /* Pods-LottoStats.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LottoStats.debug.xcconfig"; path = "Target Support Files/Pods-LottoStats/Pods-LottoStats.debug.xcconfig"; sourceTree = "<group>"; };
+		3F8C0750AEE943BEBAF645F4 /* BootSplash.storyboard */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = BootSplash.storyboard; path = LottoStats/BootSplash.storyboard; sourceTree = "<group>"; };
 		5709B34CF0A7D63546082F79 /* Pods-LottoStats.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LottoStats.release.xcconfig"; path = "Target Support Files/Pods-LottoStats/Pods-LottoStats.release.xcconfig"; sourceTree = "<group>"; };
 		5DCACB8F33CDC322A6C60F78 /* libPods-LottoStats.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-LottoStats.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		761780EC2CA45674006654EE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = LottoStats/AppDelegate.swift; sourceTree = "<group>"; };
@@ -47,6 +51,8 @@
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 				13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */,
+				3F8C0750AEE943BEBAF645F4 /* BootSplash.storyboard */,
+				09CB7D5630A44744BE4E67B1 /* Colors.xcassets */,
 			);
 			name = LottoStats;
 			sourceTree = "<group>";
@@ -161,6 +167,8 @@
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				F142233382D14D37555AD5F4 /* PrivacyInfo.xcprivacy in Resources */,
+				A72693BC1B9340D49A0AAE88 /* BootSplash.storyboard in Resources */,
+				9426CF30F3664E9FBCBE83AC /* Colors.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

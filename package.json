@@ -23,6 +23,7 @@
     "lucide-react-native": "^1.14.0",
     "react": "19.1.0",
     "react-native": "0.81.0",
+    "react-native-bootsplash": "^7.3.2",
     "react-native-gesture-handler": "^2.31.2",
     "react-native-mmkv": "^4.3.1",
     "react-native-nitro-modules": "^0.35.6",
