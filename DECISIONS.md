@@ -313,3 +313,63 @@ UI 컴포넌트, 테마 토큰, imperative 호스트처럼 디자인 시스템 �
 - **포기한 옵션**: (a) 세트 개수 컨트롤 자작(라이브러리가 이미 지원한다. Figma에 변형만 없던 것), (b) 알고리즘 행 커스텀 라디오(원 + Check를 손으로 그림. OptionCard가 같은 비주얼을 이미 제공하는데 선택 UI를 다시 만드는 셈), (c) DS `Radio`(좌측 dot + 라벨 구조라 우측 체크·2줄 카드 레이아웃과 안 맞음).
 - **근거**: SegmentedControl과 OptionCard는 색을 앱 토큰으로 테마링받는 구조 컴포넌트다(라이브러리=구조, 앱=색·문구). Figma의 OptionCard가 이 DS 컴포넌트를 원본으로 만든 것이라, 코드도 같은 컴포넌트를 쓰면 그대로 맞는다. Figma에 변형이 없는 것과 코드의 데이터 구동은 별개다.
 - **결과**: 추천 화면은 도메인 컴포넌트(LottoBallSet)만 자체로 두고 선택 컨트롤은 DS를 재사용한다. `components/input` 배럴에 `OptionCard` re-export를 추가했다.
+
+---
+
+## ADR-29: 즐겨찾기는 MMKV + Zustand (앱의 첫 "쓰기" 데이터)
+
+- **상황**: 지금까지 화면은 모두 읽기였다(회차 데이터를 TanStack Query 캐시로 소비). 즐겨찾기는 사용자가 저장·삭제·수정하는 로컬 데이터이고 서버가 없다. 저장 구조를 새로 정해야 했다.
+- **선택**: 별도 MMKV 인스턴스(`id: 'favorites'`) + Zustand 스토어로 둔다. 스토어가 초기화 때 MMKV에서 hydrate하고 변경마다 persist한다. 항목 스키마 `FavoriteItem { id, numbers(6·오름차순), memo?, createdAt, source }`, 출처 `source`는 `manual`(직접 추가) / `recommend`(추천 세트) / `round`(회차, 타입만 정의). 중복 정책은 같은 조합 + 같은 `source.kind`면 무시한다(추천에서 ★를 여러 번 눌러도 하나).
+- **포기한 옵션**: (a) TanStack Query(서버 상태용이라 순수 로컬 쓰기에 안 맞음), (b) AsyncStorage(성능), (c) 회차 캐시와 같은 인스턴스(키 충돌), (d) 중복 무제한 허용(같은 세트 반복 저장으로 목록이 지저분).
+- **근거**: 즐겨찾기는 서버 없는 순수 로컬 쓰기라 Zustand + MMKV 조합이 맞다. MMKV는 동기 read라 첫 렌더부터 확정값이다. 별도 인스턴스로 회차 캐시와 격리하고, `source`로 출처를 구분해 ★·직접 추가를 같은 저장소로 모은다.
+- **결과**: `stores/`의 첫 사용처. Recommend 세트별 ★와 FavoriteAdd가 이 스토어를 쓴다. `add`는 id·createdAt을 스토어가 생성한다.
+
+---
+
+## ADR-30: 자동 비교는 "볼 때 계산", 대상은 저장 이후 첫 추첨 회차
+
+- **상황**: 저장한 조합을 실제 당첨 회차와 자동 비교해야 한다. 당첨은 저장한 뒤에 나오므로 언제·어느 회차와 비교할지 정해야 했고, Figma에는 비교 UI가 없었다.
+- **선택**: 저장 시점이 아니라 **볼 때** 계산한다. 대상 회차는 `createdAt` 이후 처음 추첨된 회차다(회차 date에 추첨 시각 20:35 KST를 붙여 절대 시각으로 비교, `createdAt`보다 늦은 것 중 가장 이른 회차). 아직 없으면 "다음 추첨 대기". `matchLotto(picks, draw)`로 매칭 개수·보너스·등수(6=1등 / 5+보너스=2등 / 5=3등 / 4=4등 / 3=5등)를 낸다. Favorites 카드에 담백한 배지로 표시한다(Figma에 없어 신설).
+- **포기한 옵션**: (a) 저장 시 계산(그 시점엔 당첨 회차가 없음), (b) 최신 회차와 비교(저장 시점과 무관해 의미 약함), (c) 전 회차 최고 매칭(운 좋은 과거를 보여줄 뿐), (d) 대상 회차를 저장(`createdAt`으로 파생 가능해 불필요·stale 위험).
+- **근거**: 당첨은 사후 사실이라 볼 때 계산이 정확하고 stale이 없다. "저장 후 첫 회차"가 "내 번호가 다음 추첨에 맞았나"라는 사용자 기대와 맞는다. 20:35 KST 기준이라 같은 날 추첨 전/후 저장을 정확히 가른다. 배지는 예측이 아니라 사후 확인이므로 과장 없이 담백하게 둔다.
+- **결과**: `utils/matchLotto`(`matchLotto`·`getTargetRound`, 순수 함수). 실데이터로 등수 규칙·타깃 회차를 검증했다.
+
+---
+
+## ADR-31: 동작 없는 즐겨찾기 진입점은 두지 않는다 (RoundDetail ★ 제거)
+
+- **상황**: RoundDetail 헤더와 Recommend 결과에 ★가 no-op으로 있었다. 즐겨찾기 구현 때 배선 대상이었는데, 회차 ★의 의미가 애매했다(회차 당첨번호를 조합으로 저장? 회차를 북마크?).
+- **선택**: Recommend ★만 배선한다(그 추천 세트를 `source: recommend`로 저장, 저장 상태에 따라 별 채움/토글). RoundDetail ★는 제거하고 SubHeader를 title만 렌더한다.
+- **포기한 옵션**: (a) 회차 당첨번호를 조합으로 저장(이미 나온 번호라 자동 비교가 늘 1등이고 다시 살 번호도 아님), (b) 회차 북마크를 별도 항목 타입으로(Favorites의 콤보 카드 UI와 안 맞고 Figma에 없는 화면이 필요).
+- **근거**: 동작 없는 버튼은 두지 않는다(정직성). Favorites의 핵심은 직접 추가와 추천 저장이다. 회차 북마크가 실제로 필요해지면 그때 별도로 설계한다.
+- **결과**: RoundDetail SubHeader의 right ★ 제거(SubHeader 컴포넌트는 right 옵셔널 그대로라 다른 소비처 영향 없음). `FavoriteSource`의 `round`는 타입만 남기고 미사용.
+
+---
+
+## ADR-32: FavoriteAdd 번호 선택은 LottoBall 무변경 + 링 래퍼
+
+- **상황**: FavoriteAdd의 1~45 그리드에서 6개를 골라야 한다. 공용 컴포넌트 LottoBall에는 선택 상태가 없다.
+- **선택**: 도메인 컴포넌트 `NumberPicker`에서 LottoBall을 Pressable + 링 래퍼로 감싼다. 선택 시 `primary.action` 테두리, 미선택은 같은 두께의 투명 테두리로 셀 크기를 고정한다. LottoBall 자체는 건드리지 않는다. 6개까지만 추가되고(7번째 막힘) 해제는 항상 된다. 편집은 같은 화면을 재사용한다(`FavoriteAdd`에 옵셔널 `id` 파라미터).
+- **포기한 옵션**: (a) LottoBall에 `selected` prop 추가(여러 화면 공용이라 영향 범위가 넓고, 선택은 그리드 국소 관심사), (b) 그리드 전용 새 볼 컴포넌트(색·번호 로직 중복).
+- **근거**: LottoBall은 홈·리스트·상세·추천 등 여러 화면이 쓰는 공용 컴포넌트라 최소 침습이 안전하다. 선택 링은 NumberPicker만의 관심사이므로 래퍼에 둔다.
+- **결과**: `components/lotto/NumberPicker`. FavoriteAdd가 신규·편집 공용 화면이 된다.
+
+---
+
+## ADR-33: 설정은 동작하는 것만 둔다 (시연 갤러리 → 실제 설정)
+
+- **상황**: SettingsScreen이 1050줄짜리 컴포넌트 시연 갤러리(개발용)였다. 실제 설정 화면이 필요했고, 표시만 하는 껍데기 설정은 정직성에 어긋난다.
+- **선택**: 갤러리를 완전히 대체하고 **실제로 동작하는 항목만** 둔다. 테마 모드(시스템/라이트/다크)를 설정 스토어에 저장하고 App.tsx가 그 값으로 `isDark`를 정한다(기존엔 시스템 추종만이었음 → 수동 전환 도입). 기본 분석 범위를 저장해 StatsDetail 진입 초기 범위에 반영한다. 그 외 데이터 새로고침(refetch)·캐시 삭제(회차 캐시만, DS 다이얼로그 확인)·앱 버전(package.json)·개발자 깃허브(Linking)·오픈소스 라이선스를 제공한다. 설정 저장은 별도 MMKV 인스턴스(`id: 'settings'`) + Zustand로 favoritesStore와 같은 패턴이다.
+- **포기한 옵션**: (a) 햅틱 토글(M6 네이티브 햅틱 전엔 켜고 끌 동작이 없어 저장만 하는 no-op — 제외), (b) 이용약관(M5 배포 시 실제 약관이 정해진 뒤), (c) Statistics 탭도 설정 범위를 따르게(그 화면은 "최근 100회차 기반" 문구라 100 고정 유지, 범위는 StatsDetail에만 적용).
+- **근거**: 설정은 실제로 반영돼야 신뢰가 간다. 테마·범위는 스토어와 배선으로 즉시 반영되고, 뒷받침 없는 항목은 기능이 생길 때 함께 넣는다.
+- **결과**: `stores/settingsStore`·`storage/settingsStorage`·`types/settings`. StatsDetail의 `RangeKey`를 공유 타입 `StatsRange`로 승격해 재사용한다. M3의 마지막 화면이 완성됐다.
+
+---
+
+## ADR-34: 오픈소스 라이선스는 도구로 생성한 TS 모듈 (JSON import 회피)
+
+- **상황**: 설정에 오픈소스 라이선스 고지(종류 + 전문 + 저작권)가 필요했다. 정확성이 핵심이라 수기 작성은 오류 위험이 크다.
+- **선택**: `license-checker-rseidelsohn`(devDependency)이 node_modules를 스캔해 라이선스 종류를 판별한다. 얇은 후처리(`scripts/build-licenses.js`, `npm run licenses`)가 package.json의 직접 의존성만 골라 실제 LICENSE 전문·저작권을 뽑고, LICENSE 파일이 없어 도구가 README를 가리키는 경우만 SPDX 표준 전문으로 보정한다. 출력은 JSON이 아니라 **`.ts` 모듈**(`export const licenses`)로 만든다. 앱은 목록 → 전문 상세로 소비한다.
+- **포기한 옵션**: (a) 수기 라이선스 목록(부정확·유지보수 부담), (b) `licenses.json`을 default import(배열이 최상위인 JSON은 Metro/babel 상호운용에서 `undefined`가 되는 문제를 실제로 겪음), (c) 전체 production 의존성 599개 나열(과함), (d) 런타임 라이선스 표시 라이브러리(유지보수가 불안정).
+- **근거**: 도구가 스캔·판별하므로 종류·전문이 실제와 일치한다(수기 오류 0). `.ts` 모듈은 일반 ES export라 JSON import 문제를 원천 제거한다. 직접 의존성 범위가 완결적이되 과하지 않고, devDependency라 앱 번들에는 안 들어간다.
+- **결과**: `scripts/build-licenses.js`, 생성물 `src/data/licenses.ts`(`.eslintignore` 등록), `OssLicenses`·`OssLicenseDetail` 화면. 직접 의존성 20종(MIT 19 + ISC 1), LICENSE 파일 없는 2종(mmkv·nitro-modules)은 SPDX 폴백.
