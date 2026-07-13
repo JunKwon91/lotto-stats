@@ -31,6 +31,7 @@ import { LottoBallSet } from '@/components/lotto';
 import { Text } from '@/components/primitives';
 import { Card, Screen } from '@/components/surface';
 import { useLottoData } from '@/hooks/queries/useLottoData';
+import { useFavoritesStore } from '@/stores/favoritesStore';
 import { generateRecommendation, type RecommendType } from '@/utils/algorithms';
 
 type IconTone = 'hot' | 'cold' | 'accent';
@@ -147,6 +148,10 @@ export default function RecommendScreen() {
   const [count, setCount] = useState<CountKey>('1');
   const [results, setResults] = useState<number[][] | null>(null);
 
+  const favorites = useFavoritesStore(s => s.items);
+  const addFavorite = useFavoritesStore(s => s.add);
+  const removeFavorite = useFavoritesStore(s => s.remove);
+
   const rounds = data?.data;
   const canGenerate = rounds != null && rounds.length > 0;
 
@@ -170,6 +175,24 @@ export default function RecommendScreen() {
   const handleGenerate = () => {
     if (!canGenerate) return;
     setResults(generateRecommendation(algorithm, rounds, Number(count)));
+  };
+
+  // 추천 세트의 저장 여부 — 같은 번호 + 추천 출처. 저장돼 있으면 그 항목을 반환
+  const savedFavorite = (set: number[]) => {
+    const key = set.join(',');
+    return favorites.find(
+      it => it.source.kind === 'recommend' && it.numbers.join(',') === key,
+    );
+  };
+
+  // ★ 토글 — 저장돼 있으면 제거, 아니면 추천 출처로 저장(id·createdAt은 스토어가 생성)
+  const toggleFavorite = (set: number[]) => {
+    const existing = savedFavorite(set);
+    if (existing) {
+      removeFavorite(existing.id);
+    } else {
+      addFavorite({ numbers: set, source: { kind: 'recommend', algorithm } });
+    }
   };
 
   return (
@@ -248,28 +271,39 @@ export default function RecommendScreen() {
                 </Text>
                 <Text variant="headlineMd">{RESULT_LABEL[algorithm]}</Text>
               </ResultHeader>
-              {results.map((set, i) => (
-                <Card key={i} variant="filled">
-                  {results.length > 1 && (
-                    <SetLabel>
-                      <Text variant="labelSm" color="muted">
-                        세트 {i + 1}
-                      </Text>
-                    </SetLabel>
-                  )}
-                  <ResultRow>
-                    <LottoBallSet numbers={set} size="md" />
-                    <Pressable
-                      accessibilityRole="button"
-                      accessibilityLabel="즐겨찾기"
-                      hitSlop={8}
-                      onPress={() => {}}
-                    >
-                      <Star size={22} color={theme.colors.text.secondary} />
-                    </Pressable>
-                  </ResultRow>
-                </Card>
-              ))}
+              {results.map((set, i) => {
+                const saved = savedFavorite(set) != null;
+                return (
+                  <Card key={i} variant="filled">
+                    {results.length > 1 && (
+                      <SetLabel>
+                        <Text variant="labelSm" color="muted">
+                          세트 {i + 1}
+                        </Text>
+                      </SetLabel>
+                    )}
+                    <ResultRow>
+                      <LottoBallSet numbers={set} size="md" />
+                      <Pressable
+                        accessibilityRole="button"
+                        accessibilityLabel={saved ? '즐겨찾기 해제' : '즐겨찾기 저장'}
+                        hitSlop={8}
+                        onPress={() => toggleFavorite(set)}
+                      >
+                        <Star
+                          size={22}
+                          color={
+                            saved
+                              ? theme.colors.primary.action
+                              : theme.colors.text.secondary
+                          }
+                          fill={saved ? theme.colors.primary.action : 'none'}
+                        />
+                      </Pressable>
+                    </ResultRow>
+                  </Card>
+                );
+              })}
             </Block>
           ) : (
             <Block>
