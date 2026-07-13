@@ -70,7 +70,7 @@ export default function RootNavigator() {
       <Stack.Screen
         name="FavoriteAdd"
         component={FavoriteAddScreen}
-        options={{ title: '즐겨찾기 추가' }}
+        options={{ headerShown: false }}
       />
       <Stack.Screen
         name="Settings"
