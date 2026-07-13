@@ -17,11 +17,11 @@ import {
   Plus,
   Trash2,
 } from 'lucide-react-native';
-import { Alert, ScrollView } from 'react-native';
+import { ScrollView } from 'react-native';
 import styled, { useTheme } from 'styled-components/native';
 
 import { Button } from '@/components/action';
-import { EmptyState } from '@/components/feedback';
+import { dialog, EmptyState } from '@/components/feedback';
 import { AppHeader } from '@/components/layout';
 import { LottoBallSet } from '@/components/lotto';
 import { Text } from '@/components/primitives';
@@ -217,11 +217,15 @@ export default function FavoritesScreen() {
   const goAdd = () => navigation.navigate('FavoriteAdd');
   const goEdit = (id: string) => navigation.navigate('FavoriteAdd', { id });
 
-  const confirmDelete = (item: FavoriteItem) => {
-    Alert.alert('조합 삭제', `"${item.memo || '번호 조합'}"을(를) 삭제할까요?`, [
-      { text: '취소', style: 'cancel' },
-      { text: '삭제', style: 'destructive', onPress: () => remove(item.id) },
-    ]);
+  const confirmDelete = async (item: FavoriteItem) => {
+    const confirmed = await dialog.confirm({
+      title: '조합 삭제',
+      description: `"${item.memo || '번호 조합'}" 조합을 삭제합니다. 이 작업은 되돌릴 수 없습니다.`,
+      destructive: true,
+      confirmLabel: '삭제',
+      cancelLabel: '취소',
+    });
+    if (confirmed) remove(item.id);
   };
 
   return (

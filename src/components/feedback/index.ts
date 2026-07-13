@@ -14,4 +14,5 @@ export {
   Dialog,
   type DialogProps,
   DialogHost,
+  dialog,
 } from '@junkwon91/rn-design-system';
