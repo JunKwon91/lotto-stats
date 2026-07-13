@@ -373,3 +373,13 @@ UI 컴포넌트, 테마 토큰, imperative 호스트처럼 디자인 시스템 �
 - **포기한 옵션**: (a) 수기 라이선스 목록(부정확·유지보수 부담), (b) `licenses.json`을 default import(배열이 최상위인 JSON은 Metro/babel 상호운용에서 `undefined`가 되는 문제를 실제로 겪음), (c) 전체 production 의존성 599개 나열(과함), (d) 런타임 라이선스 표시 라이브러리(유지보수가 불안정).
 - **근거**: 도구가 스캔·판별하므로 종류·전문이 실제와 일치한다(수기 오류 0). `.ts` 모듈은 일반 ES export라 JSON import 문제를 원천 제거한다. 직접 의존성 범위가 완결적이되 과하지 않고, devDependency라 앱 번들에는 안 들어간다.
 - **결과**: `scripts/build-licenses.js`, 생성물 `src/data/licenses.ts`(`.eslintignore` 등록), `OssLicenses`·`OssLicenseDetail` 화면. 직접 의존성 20종(MIT 19 + ISC 1), LICENSE 파일 없는 2종(mmkv·nitro-modules)은 SPDX 폴백.
+
+---
+
+## ADR-35: 회차 데이터 영속은 MMKV cache-first 유지 (TanStack Query persister 미승격)
+
+- **상황**: M2 잔여로 "현행 MMKV 직접 cache-first 유지 vs TanStack Query persister 승격" 갈림길이 있었다. 현재 구조(ADR-07·ADR-12)는 `useLottoData`가 `useQuery`를 쓰되, `initialData`로 MMKV 캐시를 동기 read해 시드하고 `queryFn`(`syncLottoData`)이 성공 fetch마다 MMKV에 쓰는 수동 cache-first다. TanStack Query 자체 캐시는 인메모리라 콜드 스타트마다 소멸하고, 런치 간 영속은 MMKV가 담당한다. 이를 표준 persister(`persistQueryClient` + 스토리지 어댑터)로 승격할지 결정이 필요했다.
+- **선택**: 현행 MMKV cache-first 유지. persister 미승격.
+- **포기한 옵션**: (a) `@tanstack/query-*-persister` 승격 — Query 캐시 전체를 자동 dehydrate/rehydrate, (b) MMKV용 persister 어댑터 직접 구현.
+- **근거**: persister의 핵심 가치는 여러 독립 쿼리를 일괄 영속·복원하는 것인데, 이 앱은 `useQuery`가 앱 전체에서 1개(전 회차 history)뿐이고 `useMutation`·`useInfiniteQuery`는 0이라 그 이점이 발생하지 않는다. MMKV는 동기 read라 `initialData`가 첫 프레임부터 데이터를 채워 하이드레이션 깜빡임이 없는데, `persistQueryClient`는 비동기 복원이라 게이팅·플래시 여지가 생긴다. 현행 `syncLottoData`는 fetch 실패 시 캐시를 반환하며 `status=success`를 유지하는 무음 오프라인 폴백을 이미 제공한다. 잘 도는 단순한 구조를 표준이라는 이유로 복잡하게 바꿀 실익이 없다(YAGNI).
+- **결과**: 코드 변경 없음. `useLottoData`·`lottoStorage` 현행 유지. TanStack Query는 미사용 의존성이 아니라 `useLottoData`의 fetch·재시도·상태 관리에 실사용 중이며 8개 화면이 의존하므로 제거 대상이 아니다(제거 시 `QueryClientProvider` 필요로 앱이 깨진다). 독립 캐싱이 필요한 서버 쿼리가 여러 개로 늘 때(회차별 원격 fetch·계정 등) 재검토한다. 오프라인 4시나리오는 코드상 크래시·무한 로딩 없이 처리됨을 확인했다 — 캐시 있으면 즉시 렌더(fetch 미시도), 캐시 없는 오프라인 최초 실행도 retry 소진 후 `ErrorView`(다시 시도)로 수렴한다(모든 소비처가 `!data`·옵셔널 체이닝으로 가드).
