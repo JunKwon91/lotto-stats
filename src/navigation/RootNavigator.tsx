@@ -15,6 +15,8 @@ import RoundDetailScreen from '@/screens/stats/RoundDetailScreen';
 import RoundListScreen from '@/screens/stats/RoundListScreen';
 import StatsDetailScreen from '@/screens/stats/StatsDetailScreen';
 import FavoriteAddScreen from '@/screens/favorites/FavoriteAddScreen';
+import OssLicenseDetailScreen from '@/screens/settings/OssLicenseDetailScreen';
+import OssLicensesScreen from '@/screens/settings/OssLicensesScreen';
 import SettingsScreen from '@/screens/settings/SettingsScreen';
 import type { RootStackParamList } from './types';
 
@@ -75,7 +77,17 @@ export default function RootNavigator() {
       <Stack.Screen
         name="Settings"
         component={SettingsScreen}
-        options={{ title: '설정' }}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="OssLicenses"
+        component={OssLicensesScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="OssLicenseDetail"
+        component={OssLicenseDetailScreen}
+        options={{ headerShown: false }}
       />
     </Stack.Navigator>
   );

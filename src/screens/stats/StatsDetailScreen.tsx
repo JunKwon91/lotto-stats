@@ -27,6 +27,8 @@ import { LottoBall } from '@/components/lotto';
 import { Text } from '@/components/primitives';
 import { Card, Screen } from '@/components/surface';
 import { useLottoData } from '@/hooks/queries/useLottoData';
+import { useSettingsStore } from '@/stores/settingsStore';
+import type { StatsRange } from '@/types/settings';
 import {
   getCoOccurrenceMatrix,
   getConsecutiveDistribution,
@@ -39,9 +41,7 @@ import {
 } from '@/utils/statistics';
 
 // 범위 선택 — 최근 N회 또는 전체
-type RangeKey = '100' | '30' | 'all';
-
-const RANGE_SEGMENTS: SegmentedControlSegment<RangeKey>[] = [
+const RANGE_SEGMENTS: SegmentedControlSegment<StatsRange>[] = [
   { value: '100', label: '100회차' },
   { value: '30', label: '30회차' },
   { value: 'all', label: '전체' },
@@ -195,7 +195,9 @@ export default function StatsDetailScreen() {
   const theme = useTheme();
   const { data, isError, refetch } = useLottoData();
 
-  const [range, setRange] = useState<RangeKey>('100');
+  // 진입 초기 범위는 설정의 기본 분석 범위를 따른다(이후 세그먼트로 로컬 전환)
+  const defaultRange = useSettingsStore(s => s.defaultStatsRange);
+  const [range, setRange] = useState<StatsRange>(defaultRange);
 
   const stats = useMemo(() => {
     const sorted = [...(data?.data ?? [])].sort((a, b) => b.drawNo - a.drawNo);

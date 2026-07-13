@@ -45,6 +45,8 @@ export type RootStackParamList = {
   StatsDetail: { type: 'frequency' | 'pattern' | 'gap' };
   FavoriteAdd: { id?: string } | undefined;
   Settings: undefined;
+  OssLicenses: undefined;
+  OssLicenseDetail: { name: string };
 };
 
 // ----------------------------------------------------------------------------
@@ -72,6 +74,8 @@ export type RoundListScreenProps = NativeStackScreenProps<RootStackParamList, 'R
 export type StatsDetailScreenProps = NativeStackScreenProps<RootStackParamList, 'StatsDetail'>;
 export type FavoriteAddScreenProps = NativeStackScreenProps<RootStackParamList, 'FavoriteAdd'>;
 export type SettingsScreenProps = NativeStackScreenProps<RootStackParamList, 'Settings'>;
+export type OssLicensesScreenProps = NativeStackScreenProps<RootStackParamList, 'OssLicenses'>;
+export type OssLicenseDetailScreenProps = NativeStackScreenProps<RootStackParamList, 'OssLicenseDetail'>;
 
 // ----------------------------------------------------------------------------
 // 전역 RootParamList 보강 — useNavigation 자동 추론

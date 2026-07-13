@@ -26,12 +26,15 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from 'styled-components/native';
 import RootNavigator from '@/navigation/RootNavigator';
 import { queryClient } from '@/lib/queryClient';
+import { useSettingsStore } from '@/stores/settingsStore';
 import { darkTheme, lightTheme } from '@/theme';
 import { DialogHost, ToastHost } from '@junkwon91/rn-design-system';
 
 export default function App() {
-  // 시스템 색상 모드 감지. null/undefined는 'light'로 폴백.
-  const isDark = useColorScheme() === 'dark';
+  // 테마 모드는 설정값을 따른다 — 'system'이면 시스템 색상, 아니면 강제.
+  const systemDark = useColorScheme() === 'dark';
+  const themeMode = useSettingsStore(s => s.themeMode);
+  const isDark = themeMode === 'system' ? systemDark : themeMode === 'dark';
   const theme = isDark ? darkTheme : lightTheme;
 
   return (
