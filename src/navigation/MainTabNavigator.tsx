@@ -70,10 +70,12 @@ export default function MainTabNavigator() {
         // 활성/비활성 색상
         tabBarActiveTintColor: theme.colors.primary.action,
         tabBarInactiveTintColor: theme.colors.text.muted,
-        // 탭바 컨테이너 스타일
+        // 탭바 컨테이너 스타일 — 배경이 카드와 같은 surface.container라
+        // 상단 구분선으로 콘텐츠 영역과 경계를 준다
         tabBarStyle: {
           backgroundColor: theme.colors.surface.container,
-          borderTopWidth: 0,
+          borderTopWidth: 0.5,
+          borderTopColor: theme.colors.border.divider,
         },
         // 라벨 스타일
         tabBarLabelStyle: {
