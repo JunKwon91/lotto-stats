@@ -142,7 +142,7 @@ UI 컴포넌트, 테마 토큰, imperative 호스트처럼 디자인 시스템 �
 
 ## ADR-12: 데이터 로딩을 useLottoData cache-first로 통합 (ADR-07 갱신)
 
-- **상황**: ADR-07은 Splash를 데이터 로딩 관문으로 설계했다. `loadInitialLottoData()`로 캐시를 확인하고 없으면 강제 fetch한 뒤 MMKV에 저장하고 메인에 진입하는 흐름이다. 그런데 캐싱이 `useLottoData` 경로에서 이미 동작해 그 관문이 필요 없었고, `loadInitialLottoData`는 호출처가 0인 죽은 코드로 남아 있다가 제거됐다(커밋 `d298396`).
+- **상황**: ADR-07은 Splash를 데이터 로딩 관문으로 설계했다. `loadInitialLottoData()`로 캐시를 확인하고 없으면 강제 fetch한 뒤 MMKV에 저장하고 메인에 진입하는 흐름이다. 그런데 캐싱이 `useLottoData` 경로에서 이미 동작해 그 관문이 필요 없었고, `loadInitialLottoData`는 호출처가 0인 죽은 코드로 남아 있다가 제거됐다(커밋 `acf952e`).
 - **선택**: 데이터 로딩을 `useLottoData`의 per-screen cache-first + background sync로 통합한다. `initialData=getCachedLottoData()`가 재실행 시 MMKV 캐시를 바로 보여주고, `syncLottoData`가 fetch에 성공할 때마다 `setCachedLottoData`로 MMKV를 갱신하며, catch에서 `return cached`로 오프라인·fetch 실패를 폴백한다. `loadInitialLottoData`와 `LoadResult`는 제거했다.
 - **Splash 화면은 나중에 도입**: Splash는 애니메이션·브랜딩 용도의 시각적 인트로로 만들 계획이고, "데이터 로딩 관문"으로는 안 쓴다. 즉 이 결정은 "Splash를 안 만든다"가 아니라 데이터 로딩과 Splash 화면을 분리한다는 뜻이다. Splash를 넣을 때는 데이터 로딩 없이 애니메이션만 맡고(가벼운 프리페치 정도는 그때 따로 정한다), cache-first 경로는 그대로 둔다.
 - **포기한 옵션**: Splash를 데이터 로딩 관문으로 쓰는 방식(전역 강제 fetch 후 진입). cache-first가 화면별 로딩·오프라인을 자연스럽게 처리해 더 유연하다. 죽은 코드 방치(ADR-07 서술과 불일치, ADR-09의 코드-문서 정합 원칙 위반).
