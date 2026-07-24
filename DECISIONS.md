@@ -91,7 +91,7 @@ UI 컴포넌트, 테마 토큰, imperative 호스트처럼 디자인 시스템 �
 - **포기한 옵션**: 매 진입 강제 fetch(오프라인 불가·깜빡임), AsyncStorage(성능), 캐시 없이 메모리만(앱 재시작 시 손실).
 - **근거**: 과거 회차가 안 변하니 캐시 우선이 안전하다. MMKV는 동기 read라 Splash에서 바로 분기할 수 있다. 실패 시 캐시로 폴백해 UI가 끊기지 않는다.
 - **결과**: `services/lottoHistoryLoader.ts`(오케스트레이션), `storage/lottoStorage.ts`(MMKV), `hooks/queries/useLottoData.ts`(Query) 3층 구조다. `CachedLottoData`에 `cachedAt`를 더해 stale을 판단한다.
-- **갱신**: 이후 ADR-12에서 데이터 로딩 관문 역할을 `useLottoData` cache-first로 옮기고 `loadInitialLottoData`를 제거했다. Splash 화면은 데이터 로딩과 떼어내 애니메이션 용도로 나중에 도입할 계획이다.
+- **갱신**: 이후 ADR-12에서 데이터 로딩 관문 역할을 `useLottoData` cache-first로 옮기고 `loadInitialLottoData`를 제거했다. Splash 화면은 데이터 로딩과 떼어내 애니메이션 용도로 도입했다.
 
 ---
 
@@ -147,7 +147,8 @@ UI 컴포넌트, 테마 토큰, imperative 호스트처럼 디자인 시스템 �
 - **Splash 화면은 나중에 도입**: Splash는 애니메이션·브랜딩 용도의 시각적 인트로로 만들 계획이고, "데이터 로딩 관문"으로는 안 쓴다. 즉 이 결정은 "Splash를 안 만든다"가 아니라 데이터 로딩과 Splash 화면을 분리한다는 뜻이다. Splash를 넣을 때는 데이터 로딩 없이 애니메이션만 맡고(가벼운 프리페치 정도는 그때 따로 정한다), cache-first 경로는 그대로 둔다.
 - **포기한 옵션**: Splash를 데이터 로딩 관문으로 쓰는 방식(전역 강제 fetch 후 진입). cache-first가 화면별 로딩·오프라인을 자연스럽게 처리해 더 유연하다. 죽은 코드 방치(ADR-07 서술과 불일치, ADR-09의 코드-문서 정합 원칙 위반).
 - **근거**: 다시 확인해 보니 캐시 우선, 오프라인, 재실행 즉시 표시가 `useLottoData`만으로 이미 동작했고, `loadInitialLottoData`는 그 동작의 중복이었다.
-- **결과**: `services/lottoHistoryLoader.ts`는 `syncLottoData` 단일 export로 줄었다. 남은 과제: `clearCachedLottoData`(리셋 유틸) 정리 여부는 따로 판단, TanStack Query MMKV persister 승격은 미결, 오프라인·에러 경로의 런타임 검증은 미완(현재 온라인만 실측).
+- **결과**: `services/lottoHistoryLoader.ts`는 `syncLottoData` 단일 export로 줄었다.
+- **갱신**: 위에 적은 남은 과제는 모두 정리됐다. `clearCachedLottoData`는 설정의 캐시 삭제가 소비하고, persister 승격은 ADR-35에서 미승격으로 확정했으며, 오프라인·에러 경로는 실기기로 검증했다. Splash도 예정대로 데이터 로딩 없이 애니메이션만 맡는 화면으로 도입했다(네이티브 정적 화면에서 JS 애니메이션으로 인계).
 
 ---
 
@@ -177,7 +178,8 @@ UI 컴포넌트, 테마 토큰, imperative 호스트처럼 디자인 시스템 �
 - **선택**: 해당 화면만 `options={{ headerShown: false }}`로 네이티브 헤더를 끄고, 공용 `components/layout/SubHeader`(뒤로가기 `navigation.goBack` + 제목 + 우측 슬롯)를 쓴다. 홈의 로고형 `AppHeader`와는 별개의 뒤로가기형 셸 컴포넌트다.
 - **포기한 옵션**: 네이티브 헤더 + `headerRight`(디자인 토큰·레이아웃 제약), 화면마다 개별 헤더 구현(중복).
 - **근거**: 디자인 시스템 토큰으로 헤더를 그대로 구성할 수 있고, 우측만 슬롯으로 파라미터화하면 여러 서브 화면이 재사용할 수 있다(과한 추상화는 피한다). SafeArea 상단은 화면의 `Screen`(edges 'top')이 처리하므로 헤더는 관여하지 않는다.
-- **결과**: RoundList·StatsDetail 같은 서브 화면이 `SubHeader`를 공유한다. RoundDetail은 우측에 즐겨찾기 버튼을 두되 진입점만 두고 동작은 나중에 구현한다.
+- **결과**: RoundList·StatsDetail 같은 서브 화면이 `SubHeader`를 공유한다.
+- **갱신**: RoundDetail 우측에 두려던 즐겨찾기 버튼은 ADR-31에서 제거했다. 동작 없는 진입점은 두지 않기로 해, 즐겨찾기 저장은 추천 화면과 FavoriteAdd가 맡는다.
 
 ---
 
