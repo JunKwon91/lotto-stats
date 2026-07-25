@@ -1,0 +1,54 @@
+name: CI
+
+# 앱 품질 게이트 — PR과 main 푸시에서 lint / 타입체크 / 테스트를 검증한다.
+# (실제 iOS/Android 앱 빌드는 여기서 하지 않는다. 순수 로직·타입·스타일만 검증.)
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# 같은 브랜치에 연속으로 푸시하면 이전 실행은 취소한다. 마지막 커밋 결과만
+# 의미가 있어, 중간 실행을 계속 돌리는 건 러너 시간 낭비다.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+# 최소 권한. 이 워크플로는 코드를 읽기만 하고 커밋·이슈·릴리스를 만들지 않는다.
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    # 정상 실행이 수 분이라, 그 이상 매달리면 무언가 잘못된 것으로 보고 끊는다.
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          # package.json engines(">=18")를 만족하는 LTS.
+          node-version: '20'
+          # npm 캐시(~/.npm) 복원 — package-lock.json 해시 기준. 설치 시간을 줄인다.
+          cache: 'npm'
+
+      - name: Install dependencies
+        # npm ci: package-lock.json 그대로 재현 설치(재현성). 이 앱은 디자인 시스템을
+        # github 의존성으로 쓰는데, 설치 시 그 패키지의 prepare(빌드)가 실행돼야
+        # lib/ 산출물이 생겨 타입체크가 통과하므로 스크립트를 막지 않는다.
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Type check
+        # 앱 전체 타입 검사(tsc --noEmit).
+        run: npm run typecheck
+
+      - name: Test
+        # 통계·추천·회차 등 순수 함수 유닛 테스트. --ci로 CI 모드 + 커버리지 요약.
+        run: npm test -- --ci --coverage --coverageReporters=text-summary
