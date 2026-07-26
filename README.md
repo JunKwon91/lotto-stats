@@ -2,6 +2,7 @@
 
 한국 로또 6/45 당첨 데이터를 수집·분석해 통계와 번호 추천을 제공하는 React Native 앱입니다.
 
+[![CI](https://github.com/JunKwon91/lotto-stats/actions/workflows/ci.yml/badge.svg)](https://github.com/JunKwon91/lotto-stats/actions/workflows/ci.yml)
 ![React Native](https://img.shields.io/badge/React%20Native-0.81-61DAFB?logo=react)
 ![New Architecture](https://img.shields.io/badge/New%20Architecture-Fabric-informational)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178C6?logo=typescript)
@@ -151,10 +152,17 @@ npm run android
 **기타 스크립트**
 
 ```bash
-npm test              # Jest
+npm test              # Jest 유닛 테스트
+npm run typecheck     # tsc --noEmit 타입 검사
 npm run lint          # ESLint
 npm run licenses      # 오픈소스 라이선스 목록 생성
 ```
+
+## 테스트 & CI
+
+통계 집계·추천 알고리즘·당첨 비교·회차 계산 등 핵심 로직을 순수 함수로 두고 85개의 유닛 테스트로 검증합니다. 추천 알고리즘은 난수 생성기를 주입받아 시드를 고정하면 결과가 재현되므로, 무작위 로직도 결정적으로 테스트합니다.
+
+PR과 main 푸시 시 GitHub Actions(CI)가 lint · 타입체크 · 테스트를 자동으로 검증합니다.
 
 ## 라이선스
 
